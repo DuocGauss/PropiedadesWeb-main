@@ -9716,3 +9716,13 @@ a.text-dark:hover, a.text-dark:focus {
 .custom-footer-color {
   background-color: #000; /* Color verde, cámbialo por el color que prefieras */
 }
+
+ /* Estilos para el contenido de la página de inicio */
+ .contenido-principal { 
+  margin-top: 50px;   /* Espacio superior para centrar verticalmente */
+  position: relative;
+  min-height: 100vh;
+}
+#content-wrap {
+  padding-bottom: 2.5rem;    /* Footer height */
+}

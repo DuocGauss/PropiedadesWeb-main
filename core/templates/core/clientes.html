@@ -1,0 +1,357 @@
+{% extends "core/base.html" %}
+{% load static %}
+{% block title %}Clientes{% endblock %}
+{% load crispy_forms_tags %}
+{% block content %}
+
+{% if messages %}
+    {% for msg in messages %}
+       <script>
+           Swal.fire({
+               title: 'Exito!',
+               text: '{{msg}}',
+               icon: 'success',
+               confirmButtonText: 'Aceptar',
+               confirmButtonColor: 'Green'
+           });
+       </script>
+    {% endfor %}
+{% endif %}
+
+<div class="container-fluid mb-3">
+    <h2 style="text-align:center;">Gestión de clientes</h2>
+    <div class="row">
+        <div class="col-lg-12 d-flex justify-content-between align-items-center mb-2">
+            <div class="flex-grow-1 d-flex justify-content-center">
+
+            <form method="get" action="{% url 'cliente_list' %}" class="form-inline my-2 my-lg-0">
+                <input class="form-control mr-sm-2" name="q" type="search" placeholder="Buscar Clientes" aria-label="Search">
+                <button class="btn btn-outline-warning my-2 my-sm-0" type="submit">Buscar</button>
+            </form>
+        </div>
+        <button class="btn btn-primary btn-sm me-5" data-toggle="modal" data-target="#addModal">Agregar <i class="fas fa-plus"></i></button>
+    </div>
+</div>
+<div class="row px-xl-5">
+    <div class="col-lg-12">
+        {% if request.GET.q %}
+        <!-- Botón Reset -->
+        <a class="btn btn-secondary btn-sm me-2" href="{% url 'cliente_list' %}">
+            Volver <i class="fas fa-undo"></i>
+        </a>
+        {% endif %}
+    {% if clientes %} 
+    <!-- Tabla para mostrar clientes -->
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th scope="col">Rut</th>
+                <th scope="col">Nombre</th>
+                <th scope="col">Dirección</th>
+                <th scope="col">Teléfono</th>
+                <th scope="col">Correo</th>
+                <th scope="col">Fecha Creación</th>
+                <th scope="col">Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for cliente in clientes %}
+            <tr>
+                <td>{{ cliente.rut }}</td>
+                <td>{{ cliente.nombre }}</td>
+                <td>{{ cliente.direccion }}</td>
+                <td>{{ cliente.telefono }}</td>
+                <td>{{ cliente.correo }}</td>
+                <td>{{ cliente.fecha_creacion }}</td>
+                <td class="d-flex justify-content-between">
+                    <button class="btn btn-sm btn-primary edit-btn mr-2" data-id="{{ cliente.id}}" data-rut="{{cliente.rut}}" data-nombre="{{ cliente.nombre }}" data-direccion="{{ cliente.direccion }}" data-telefono="{{ cliente.telefono }}" data-correo="{{ cliente.correo }}">
+                        <i class="fas fa-edit"></i>
+                    </button>
+                    <button class="btn btn-sm btn-success mr-2">
+                        <i class="fas fa-user"></i>
+                    </button>
+                    <button class="btn btn-sm btn-danger delete-btn" data-id="{{ cliente.id }}">
+                        <i class="fas fa-trash-alt"></i>
+                    </button>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <div class="text-center mt-5">
+        <h3>Ningún cliente encontrado</h3>
+        <i class="fas fa-user-friends fa-5x"></i>
+    </div>
+    {% endif %}
+
+
+
+<!--Paginación-->
+
+{% if clientes.has_other_pages %}
+    <div class="btn-group" role="group" aria-label="Item pagination">
+        {% if clientes.has_previous %}
+            <a href="?page=1" class="btn btn-outline-primary">&laquo;&laquo;</a>
+            <a href="?page={{ clientes.previous_page_number }}" class="btn btn-outline-primary">&laquo;</a>
+        {% endif %}
+
+        {% for page_number in clientes.paginator.page_range %}
+            {% if clientes.number == page_number %}
+                <button class="btn btn-outline-primary">
+                    <span>{{ page_number }} <span class="sr-only">(current)</span></span>
+                </button>
+            {% else %}
+                <a href="?page={{ page_number }}" class="btn btn-outline-primary">
+                    {{ page_number }}
+                </a>
+            {% endif %}
+        {% endfor %}
+
+        {% if clientes.has_next %}
+            <a href="?page={{ clientes.next_page_number }}" class="btn btn-outline-primary">&raquo;</a>
+            <a href="?page={{ clientes.paginator.num_pages }}" class="btn btn-outline-primary">&raquo;&raquo;</a>
+        {% endif %}
+    </div>
+{% else %}
+    <p></p>
+{% endif %}
+
+        </div>
+    </div>
+</div>
+
+
+<!-- Modal para agregar cliente -->
+<div class="modal fade" id="addModal" tabindex="-1" role="dialog" aria-labelledby="addModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addModalLabel">Agregar Cliente</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="addClienteForm">
+                    {% csrf_token %}
+                    {{ form|crispy }}
+                    <button type="submit" class="btn btn-primary">Agregar</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para editar cliente -->
+<div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="editModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editModalLabel">Editar Cliente</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="editClienteForm">
+                    {% csrf_token %}
+                    <input type="hidden" id="editId" name="id">
+                    <div class="form-group">
+                        <label for="editRut">Rut</label>
+                        <input type="text" class="form-control" id="editRut" name="rut" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="editNombre">Nombre</label>
+                        <input type="text" class="form-control" id="editNombre" name="nombre" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="editDireccion">Dirección</label>
+                        <textarea class="form-control" id="editDireccion" name="direccion" rows="3"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="editTelefono">Teléfono</label>
+                        <input type="text" class="form-control" id="editTelefono" name="telefono" required></input>
+                    </div>
+                    <div class="form-group">
+                        <label for="editCorreo">Correo</label>
+                        <input type="email" class="form-control" id="editCorreo" name="correo" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Actualizar</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Código para manejar los formularios y actualizar la tabla
+
+// Manejar el formulario de agregar cliente
+$('#addClienteForm').on('submit', function(e) {
+    e.preventDefault();
+    $.ajax({
+        url: "{% url 'cliente_create' %}",
+        method: 'POST',
+        data: $(this).serialize(),
+        success: function(response) {
+            Swal.fire({
+                icon: 'success',
+                title: 'Cliente agregado',
+                text: response.message,
+                timer: 2000,
+                showConfirmButton: false
+            }).then(function() {
+                location.reload(); // Recargar la página para ver los cambios
+            });
+        },
+        error: function(response) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'Error al agregar cliente'
+            });
+        }
+    });
+});
+
+// Manejar el formulario de editar cliente
+$('#editClienteForm').on('submit', function(e) {
+    e.preventDefault();
+    var id = $('#editId').val();
+
+    // Mostrar alerta de confirmación
+    Swal.fire({
+        title: '¿Estás seguro?',
+        text: "Seguro que desea modificar este cliente?",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Sí, modificar',
+        cancelButtonText: 'Cancelar'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            // Si el usuario confirma, enviar el formulario
+            $.ajax({
+                url: "cliente_update/" + id + "/",
+                method: 'POST',
+                data: $('#editClienteForm').serialize(), // Asegúrate de serializar el formulario correctamente
+                success: function(response) {
+                    $('#editModal').modal('hide');
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Cliente actualizado',
+                        text: response.message,
+                        timer: 2000,
+                        showConfirmButton: false
+                    }).then(function() {
+                        location.reload(); // Recargar la página para ver los cambios
+                    });
+                },
+                error: function(response) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'Error al actualizar cliente'
+                    });
+                }
+            });
+        }
+    });
+});
+
+// Manejar el botón de eliminar cliente
+$(document).on('click', '.delete-btn', function() {
+    var id = $(this).data('id');
+
+    // Mostrar alerta de confirmación
+    Swal.fire({
+        title: '¿Estás seguro?',
+        text: "¡No podrás revertir esto!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Sí, eliminarlo!',
+        cancelButtonText: 'Cancelar'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            // Si el usuario confirma, enviar solicitud AJAX para eliminar
+            $.ajax({
+                url: "cliente_delete/" + id + "/",
+                method: 'POST',
+                headers: { 'X-CSRFToken': csrftoken },
+                success: function(response) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Cliente eliminado',
+                        text: response.message,
+                        timer: 2000,
+                        showConfirmButton: false
+                    }).then(function() {
+                        location.reload(); // Recargar la página para ver los cambios
+                    });
+                },
+                error: function(response) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'Error al eliminar cliente'
+                    });
+                }
+            });
+        }
+    });
+});
+
+// Mostrar modal de edición con datos del cliente seleccionado
+$(document).on('click', '.edit-btn', function() {
+    var id = $(this).data('id');
+    var rut = $(this).data('rut');
+    var nombre = $(this).data('nombre');
+    var direccion = $(this).data('direccion');
+    var telefono = $(this).data('telefono');
+    var correo = $(this).data('correo');
+
+    $('#editId').val(id);
+    $('#editRut').val(rut);
+    $('#editNombre').val(nombre);
+    $('#editDireccion').val(direccion);
+    $('#editTelefono').val(telefono);
+    $('#editCorreo').val(correo);
+
+    $('#editModal').modal('show');
+});
+
+// CSRF token setup for AJAX
+function getCookie(name) {
+    var cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        var cookies = document.cookie.split(';');
+        for (var i = 0; i < cookies.length; i++) {
+            var cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+var csrftoken = getCookie('csrftoken');
+
+$.ajaxSetup({
+    beforeSend: function(xhr, settings) {
+        if (!(/^http:.*/.test(settings.url) || /^https:.*/.test(settings.url))) {
+            xhr.setRequestHeader("X-CSRFToken", csrftoken);
+        }
+    }
+});
+
+
+</script>
+
+
+
+{% endblock %}

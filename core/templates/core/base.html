@@ -23,6 +23,8 @@
 
     <!-- Favicon -->
     <link href="{% static 'core/'%}img/favicon.ico" rel="icon">
+    <!-- Coloca este código en tu archivo HTML antes de tu script de JavaScript -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 
     <!-- Google Web Fonts -->
     <link rel="preconnect" href="https://fonts.gstatic.com">
@@ -37,7 +39,7 @@
     <link href="{% static 'core/'%}lib/owlcarousel/assets/owl.carousel.min.css" rel="stylesheet">
 
     <!-- Customized Bootstrap Stylesheet -->
-    <link href="{% static 'core/css/estilo.css'%}" rel="stylesheet">
+    <link href="{% static 'core/css/estilo2.css'%}" rel="stylesheet">
 </head>
 <style>
     nav,
@@ -109,13 +111,22 @@
               <ul class="navbar-nav fs-5 justify-content-evenly">
                 <li class="nav-item p-3 py-md-1">
                   <a href="{% url "home" %}" class="nav-link"><i class="fas fa-home"></i> Home
-                    
                   </a>
                 </li>
                 {% if user.is_authenticated %}
                 <li class="nav-item p-3 py-md-1">
-                    <a href="" class="nav-link"><i class="fas fa-user-friends"></i> Clientes</a>
+                    <a href="{% url "cliente_list" %}" class="nav-link"><i class="fas fa-user-friends"></i> Clientes</a>
                   </li>
+                <li class="nav-item p-3 py-md-1">
+                  <a href="#" class="nav-link" onclick="confirmLogout()" ><i class="fas fa-sign-out-alt"></i> Cerrar Sesión</a>
+                </li>
+                {% else %}
+                <li class="nav-item p-3 py-md-1">
+                  <a href="{% url "iniciar_sesion" %}" class="nav-link"><i class="fas fa-sign-in-alt"></i> Iniciar Sesión</a>
+                </li>
+                <li class="nav-item p-3 py-md-1">
+                  <a href="{% url "registro" %}" class="nav-link"><i class="fas fa-user-plus"></i> Registrarse</a>
+                </li>
                 {% endif %}
               </ul>
               <!-- enlaces redes sociales -->
@@ -142,24 +153,11 @@
         <div class="row bg-secondary py-1 px-xl-5 ">
             <div class="col-lg-6 d-none d-lg-block">
             </div>
-            {% if user.is_authenticated %}
+
             <div class="col-lg-6 text-center text-lg-right">
                 <div class="d-inline-flex align-items-center">
-                    <div class="btn-group">
-                        <button type="button" class="btn btn-sm btn-light" onclick="confirmLogout()" >Cerrar Sesión</button>            
+                    
                     </div>
-            {% else %}
-            <div class="col-lg-6 text-center text-lg-right">
-                <div class="d-inline-flex align-items-center">
-                    <div class="btn-group">
-                        <button type="button" class="btn btn-sm btn-light dropdown-toggle" data-toggle="dropdown">
-                        Cuenta</button>
-                        <div class="dropdown-menu dropdown-menu-right">
-                            <a class="dropdown-item" href="{% url "iniciar_sesion" %}" type="button">Iniciar Sesión</a>
-                            <a class="dropdown-item" href="{% url "registro" %}" type="button">Registrarse</a>
-                        </div>
-                    </div>
-            {% endif %}
                     
                 </div>
                 <div class="d-inline-flex align-items-center d-block d-lg-none">
@@ -173,9 +171,12 @@
     </div>
     <!-- Topbar End -->
 
-    {% block content %}
-        
-    {% endblock %}
+    <main class="contenido-principal">
+      <div id="content-wrap">
+      {% block content %}
+          
+      {% endblock %}
+    </main>  
 
     <!-- Footer Start -->
     <div class="container-fluid custom-footer-color text-secondary mt-5 pt-5">
@@ -189,7 +190,7 @@
             </div>
         </div>
     </div>
-    
+  
     <!-- Footer End -->
 
     <!-- Back to Top -->

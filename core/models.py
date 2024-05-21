@@ -62,16 +62,23 @@ class Planes(models.Model):
         return f"{self.id_planes}"
     
 class Cliente(models.Model):
-    rut_cliente = models.CharField(max_length=10, primary_key=True)
+    rut = models.CharField(max_length=12, unique=True)
     nombre = models.CharField(max_length=50)
     direccion = models.CharField(max_length=100)
     telefono = models.CharField(max_length=12)
     correo = models.CharField(max_length=200)
     fecha_creacion = models.DateField()
-    planes = models.ForeignKey(Planes, on_delete=models.CASCADE)
 
     def __str__(self):
-        return f"{self.rut_cliente} - {self.nombre}"
+        return f"{self.rut} - {self.nombre}"
+    
+class Tipo_Cliente(models.Model):
+    id_tipo = models.AutoField(primary_key=True)
+    tipo_cliente = models.CharField(max_length=50)
+    rut_cliente = models.ForeignKey(Cliente, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f"{self.id_tipo} - {self.tipo_cliente}"
     
 class Comprador(models.Model):
     rut_comprador = models.CharField(max_length=10, primary_key=True)

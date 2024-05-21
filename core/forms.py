@@ -1,5 +1,5 @@
 from django import forms
-from .models import EmpresaCorredora
+from .models import EmpresaCorredora, Cliente
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm, UserChangeForm
 
 
@@ -14,3 +14,21 @@ class frmLogin(AuthenticationForm):
     class Meta:
         model = EmpresaCorredora 
         fields = ['username', 'password'] 
+        
+        
+class frmCliente(forms.ModelForm):
+    class Meta:
+        model=Cliente
+        fields=["rut","nombre","direccion","telefono","correo","fecha_creacion"]
+        widgets = {
+            'fecha_creacion': forms.DateInput(attrs={'type': 'date'})
+        } 
+        
+
+class frmClienteEdit(forms.ModelForm):
+    class Meta:
+        model=Cliente
+        fields=["rut","nombre","direccion","telefono","correo"]
+        
+            
+        
