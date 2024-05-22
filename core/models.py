@@ -68,6 +68,7 @@ class Cliente(models.Model):
     telefono = models.CharField(max_length=12)
     correo = models.CharField(max_length=200)
     fecha_creacion = models.DateField()
+    empresa = models.ForeignKey(EmpresaCorredora, on_delete=models.CASCADE)
 
     def __str__(self):
         return f"{self.rut} - {self.nombre}"
@@ -75,7 +76,7 @@ class Cliente(models.Model):
 class Tipo_Cliente(models.Model):
     id_tipo = models.AutoField(primary_key=True)
     tipo_cliente = models.CharField(max_length=50)
-    rut_cliente = models.ForeignKey(Cliente, on_delete=models.CASCADE)
+    cliente = models.ForeignKey(Cliente, on_delete=models.CASCADE)
 
     def __str__(self):
         return f"{self.id_tipo} - {self.tipo_cliente}"

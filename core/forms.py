@@ -1,5 +1,5 @@
 from django import forms
-from .models import EmpresaCorredora, Cliente
+from .models import EmpresaCorredora, Cliente, Tipo_Cliente
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm, UserChangeForm
 
 
@@ -31,4 +31,7 @@ class frmClienteEdit(forms.ModelForm):
         fields=["rut","nombre","direccion","telefono","correo"]
         
             
-        
+class frmTipoCliente(forms.ModelForm):
+    class Meta:
+        model=Tipo_Cliente
+        fields=["tipo_cliente"]

@@ -51,6 +51,7 @@
                 <th scope="col">Teléfono</th>
                 <th scope="col">Correo</th>
                 <th scope="col">Fecha Creación</th>
+                <th scope="col">Tipo Cliente</th>
                 <th scope="col">Acciones</th>
             </tr>
         </thead>
@@ -63,11 +64,16 @@
                 <td>{{ cliente.telefono }}</td>
                 <td>{{ cliente.correo }}</td>
                 <td>{{ cliente.fecha_creacion }}</td>
+                <td>
+                    {% for tipo in cliente.tipo_cliente_set.all %}
+                        <span class="badge badge-info">{{ tipo.tipo_cliente }}</span>
+                    {% endfor %}
+                </td>
                 <td class="d-flex justify-content-between">
                     <button class="btn btn-sm btn-primary edit-btn mr-2" data-id="{{ cliente.id}}" data-rut="{{cliente.rut}}" data-nombre="{{ cliente.nombre }}" data-direccion="{{ cliente.direccion }}" data-telefono="{{ cliente.telefono }}" data-correo="{{ cliente.correo }}">
                         <i class="fas fa-edit"></i>
                     </button>
-                    <button class="btn btn-sm btn-success mr-2">
+                    <button class="btn btn-sm btn-success add-tipo-cliente-btn mr-2" data-id="{{ cliente.id }}">
                         <i class="fas fa-user"></i>
                     </button>
                     <button class="btn btn-sm btn-danger delete-btn" data-id="{{ cliente.id }}">
@@ -183,6 +189,30 @@
         </div>
     </div>
 </div>
+
+
+<!-- Modal para agregar tipo de cliente -->
+<div class="modal fade" id="addTipoClienteModal" tabindex="-1" role="dialog" aria-labelledby="addTipoClienteModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addTipoClienteModalLabel">Agregar Tipo de Cliente</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="addTipoClienteForm">
+                    {% csrf_token %}
+                    {{ form_tipo_cliente|crispy }}
+                    <input type="hidden" id="clienteId" name="cliente_id">
+                    <button type="submit" class="btn btn-primary">Agregar</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
 
 <script>
 // Código para manejar los formularios y actualizar la tabla
@@ -304,6 +334,44 @@ $(document).on('click', '.delete-btn', function() {
         }
     });
 });
+
+
+// Mostrar modal para agregar tipo de cliente con datos del cliente seleccionado
+$(document).on('click', '.add-tipo-cliente-btn', function() {
+    var clienteId = $(this).data('id');
+    $('#clienteId').val(clienteId);
+    $('#addTipoClienteModal').modal('show');
+});
+
+// Manejar el formulario de agregar tipo de cliente
+$('#addTipoClienteForm').on('submit', function(e) {
+    e.preventDefault();
+    var clienteId = $('#clienteId').val();
+    $.ajax({
+        url: "{% url 'add_tipo_cliente' %}",
+        method: 'POST',
+        data: $(this).serialize(),
+        success: function(response) {
+            Swal.fire({
+                icon: 'success',
+                title: 'Tipo de cliente agregado',
+                text: response.message,
+                timer: 2000,
+                showConfirmButton: false
+            }).then(function() {
+                location.reload(); // Recargar la página para ver los cambios
+            });
+        },
+        error: function(response) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'Error al agregar tipo de cliente'
+            });
+        }
+    });
+});
+
 
 // Mostrar modal de edición con datos del cliente seleccionado
 $(document).on('click', '.edit-btn', function() {

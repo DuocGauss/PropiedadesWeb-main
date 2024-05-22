@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from .forms import frmRegistro, frmLogin, frmCliente, frmClienteEdit
+from .forms import frmRegistro, frmLogin, frmCliente, frmClienteEdit, frmTipoCliente
 from .models import Cliente
 from django.contrib import messages
 from django.shortcuts import render, redirect, get_object_or_404
@@ -65,7 +65,9 @@ def cerrar_sesion(request):
 @login_required
 def cliente_list(request):
     form = frmCliente()
-    clientes = Cliente.objects.all().order_by('-fecha_creacion')
+    form_tipo_cliente = frmTipoCliente()
+    empresa = request.user
+    clientes = Cliente.objects.filter(empresa=empresa).order_by('-fecha_creacion')
     contexto = {}
     
     default_page = 1
@@ -93,6 +95,7 @@ def cliente_list(request):
         clientes = paginator.page(paginator.num_pages)
         
     contexto["form"] = form
+    contexto["form_tipo_cliente"] = form_tipo_cliente
     contexto["clientes"] = clientes
     
     return render(request, 'core/clientes.html', contexto)
@@ -102,6 +105,8 @@ def cliente_create(request):
     if request.method == 'POST':
         form = frmCliente(request.POST)
         if form.is_valid():
+            cliente = form.save(commit=False)  # Crear el objeto Cliente sin guardarlo aún
+            cliente.empresa = request.user 
             form.save()
             return JsonResponse({'message': 'Cliente agregado correctamente'})
     return JsonResponse({'error': 'Formulario no válido'})
@@ -125,4 +130,17 @@ def cliente_delete(request, pk):
     return JsonResponse({'error': 'Método no permitido'}, status=405)
 
 
-        
+
+
+@login_required
+def add_tipo_cliente(request):
+    if request.method == 'POST':
+        form = frmTipoCliente(request.POST)
+        if form.is_valid():
+            cliente_id = request.POST.get('cliente_id')
+            cliente = get_object_or_404(Cliente, id=cliente_id)
+            tipo_cliente = form.save(commit=False)
+            tipo_cliente.cliente = cliente
+            tipo_cliente.save()
+            return JsonResponse({'message': 'Tipo de cliente agregado correctamente'})
+    return JsonResponse({'error': 'Formulario no válido'}, status=400)
