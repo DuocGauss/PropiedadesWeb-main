@@ -1,6 +1,6 @@
 from django.shortcuts import render
-from .forms import frmRegistro, frmLogin, frmCliente, frmClienteEdit, frmTipoCliente, frmCrearPropiedad, frmActualizarPropiedad
-from .models import Cliente, Propiedad
+from .forms import frmRegistro, frmLogin, frmCliente, frmClienteEdit, frmTipoCliente, frmCrearPropiedad, frmActualizarPropiedad, frmContrato, frmPropietario
+from .models import Cliente, Propiedad, Contrato
 from django.contrib import messages
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login, authenticate, logout
@@ -226,15 +226,66 @@ def eliminar_propiedad(request, pk):
     return JsonResponse({'error': 'Método no permitido'}, status=405)
 
 
-
+@login_required
 def publicacion(request):
     return render(request, 'core/publicacion.html')
 
+@login_required
 def op_venta(request):
     return render(request, 'core/op_venta.html')
 
+@login_required
 def op_arriendo(request):
     return render(request, 'core/op_arriendo.html')
 
+@login_required
 def propietarios(request):
-    return render(request, 'core/propietarios.html')
+    contratos = Contrato.objects.filter(rut_empresa=request.user).order_by('-fecha_firma')
+    contexto = {}
+    default_page = 1
+    page = request.GET.get('page', default_page)
+    query = request.GET.get('q')
+
+    if query:
+        contratos = contratos.filter(
+            Q(rut_propietario__rut_propietario__icontains=query) |
+            Q(rut_propietario__nombre__icontains=query) |
+            Q(rut_propietario__telefono_1__icontains=query) |
+            Q(rut_propietario__telefono_2__icontains=query) |
+            Q(rut_propietario__correo__icontains=query)
+        )
+
+    items_per_page = 5
+    paginator = Paginator(contratos, items_per_page)
+
+    try:
+        contratos = paginator.page(page)
+    except PageNotAnInteger:
+        contratos = paginator.page(default_page)
+    except EmptyPage:
+        contratos = paginator.page(paginator.num_pages)
+    
+    contexto["contratos"] = contratos
+    
+    return render(request, 'core/propietarios.html', contexto)
+
+@login_required
+def crear_contrato(request):
+    if request.method == 'POST':
+        propietario_form = frmPropietario(request.POST)
+        contrato_form = frmContrato(request.POST)
+        if propietario_form.is_valid() and contrato_form.is_valid():
+            propietario = propietario_form.save()
+            contrato = contrato_form.save(commit=False)
+            contrato.rut_propietario = propietario
+            contrato.rut_empresa = request.user  # Asignar la empresa corredora autenticada
+            contrato.save()
+            messages.success(request,"Propietario agregado")
+            return redirect('propietarios')
+    else:
+        propietario_form = frmPropietario()
+        contrato_form = frmContrato()
+    return render(request, 'core/crear_contrato.html', {
+        'propietario_form': propietario_form,
+        'contrato_form': contrato_form
+    })

@@ -1,5 +1,5 @@
 from django import forms
-from .models import EmpresaCorredora, Cliente, Tipo_Cliente, Propiedad
+from .models import EmpresaCorredora, Cliente, Tipo_Cliente, Propiedad, Propietario, Contrato
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm, UserChangeForm
 
 
@@ -59,3 +59,18 @@ class frmActualizarPropiedad(forms.ModelForm):
            'descripcion_propiedad', 'metros_cuadrados', 'nro_habitaciones', 'nro_bannos',
            'direccion_propiedad',
         ]
+        
+        
+class frmPropietario(forms.ModelForm):
+    class Meta:
+        model = Propietario
+        fields = ['rut_propietario','nombre', 'telefono_1','telefono_2', 'correo']
+
+class frmContrato(forms.ModelForm):
+    class Meta:
+        model = Contrato
+        fields = ['fecha_firma','estado','tipo_contrato','nro_propidades','fecha_termino', 'descripcion']
+        widgets = {
+            'fecha_firma': forms.DateInput(attrs={'type': 'date'}),
+            'fecha_termino': forms.DateInput(attrs={'type': 'date'})
+        }

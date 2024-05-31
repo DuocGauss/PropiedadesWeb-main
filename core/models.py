@@ -115,7 +115,7 @@ class Contrato(models.Model):
     rut_empresa = models.ForeignKey(EmpresaCorredora, on_delete=CASCADE)
 
     def __str__(self):
-        return f"{self.id_contrato}"
+        return f"{self.id_contrato} - {self.rut_propietario} - {self.rut_empresa} - {self.tipo_contrato}"
     
 class Cuenta_bancaria(models.Model):
     id_cuenta = models.IntegerField(primary_key=True)

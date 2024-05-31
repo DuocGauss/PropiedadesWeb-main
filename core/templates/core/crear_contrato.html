@@ -1,0 +1,43 @@
+{% extends "core/base.html" %}
+{% load static %}
+{% block title %}Agregar Propietario{% endblock %}
+{% load crispy_forms_tags %}
+{% block content %}
+
+{% if messages %}
+    {% for msg in messages %}
+       <script>
+           Swal.fire({
+               title: 'Exito!',
+               text: '{{msg}}',
+               icon: 'success',
+               confirmButtonText: 'Aceptar',
+               confirmButtonColor: 'Green'
+           });
+       </script>
+    {% endfor %}
+{% endif %}
+
+<div class="container" style="margin-top: 50px;">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <form class="form" action="" method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+
+                <div>
+                    <h1 style="color: #8d8d8d;">Agregar Propietario</h1>
+                </div>
+                {{ propietario_form|crispy }}
+                {{ contrato_form|crispy }}
+                
+                <div class="form-group text-center">
+                    <input type="submit" value="Agregar" class="btn btn-primary font-weight-bold">
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+
+{% endblock %}
