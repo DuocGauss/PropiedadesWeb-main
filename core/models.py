@@ -62,7 +62,7 @@ class Planes(models.Model):
         return f"{self.id_planes}"
     
 class Cliente(models.Model):
-    rut = models.CharField(max_length=12, unique=True)
+    rut = models.CharField(max_length=12)
     nombre = models.CharField(max_length=50)
     direccion = models.CharField(max_length=100)
     telefono = models.CharField(max_length=12)
@@ -187,11 +187,10 @@ class Cierre_Operacion(models.Model):
         return f"{self.id_cierre}"
     
 class Propiedad(models.Model):
-    id_propiedad = models.IntegerField(primary_key=True)
     numero_rol = models.IntegerField()
     tipo_propiedad = models.CharField(max_length=50)
     tipo_operacion = models.CharField(max_length=50)
-    titulo = models.CharField(max_length=50)
+    titulo = models.FileField(upload_to="pdfs/", null=True, blank=True)
     estado = models.BooleanField()
     descripcion_propiedad = models.TextField(default="", null=True, blank=True)
     metros_cuadrados = models.IntegerField()
@@ -202,8 +201,11 @@ class Propiedad(models.Model):
     rut_empresa = models.ForeignKey(EmpresaCorredora, on_delete=CASCADE)
     
 
+    def estado_display(self):
+        return "Nuevo" if self.estado else "Usado"
+    
     def __str__(self):
-        return f"{self.id_propiedad}"
+        return f"{self.tipo_propiedad}"
         
 class Publicacion(models.Model):
     id_publicacion = models.IntegerField(primary_key=True)

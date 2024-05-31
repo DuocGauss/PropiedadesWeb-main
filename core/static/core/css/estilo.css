@@ -3035,10 +3035,29 @@ input[type="button"].btn-block {
   color: #6C757D;
   text-align: left;
   list-style: none;
-  background-color: #fff;
+  background-color: transparent !important;
   background-clip: padding-box;
   border: 1px solid rgba(0, 0, 0, 0.15);
 }
+
+/* Asegura que el fondo del menú desplegable sea transparente */
+.dropdown-menu.dropdown-menu-dark.bg-transparent {
+  background-color: transparent !important;
+  border: none; /* Quita los bordes si es necesario */
+}
+
+/* Estilos para los elementos del menú desplegable */
+.dropdown-item {
+  background-color: transparent !important;
+  color: white !important; /* Ajusta el color del texto según tus necesidades */
+}
+
+/* Cambia el color de fondo al pasar el ratón sobre los elementos del menú */
+.dropdown-item:hover {
+  background-color: rgba(255, 255, 255, 0.1) !important; /* Color de fondo semitransparente */
+  color: white !important; /* Ajusta el color del texto según tus necesidades */
+}
+
 
 .dropdown-menu-left {
   right: auto;
@@ -4540,7 +4559,7 @@ input[type="button"].btn-block {
   padding: 0.75rem 1rem;
   margin-bottom: 1rem;
   list-style: none;
-  background-color: #e9ecef;
+  background-color: #ffffff;
 }
 
 .breadcrumb-item {

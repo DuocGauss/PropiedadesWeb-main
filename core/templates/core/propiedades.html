@@ -1,7 +1,9 @@
 {% extends "core/base.html" %}
 {% load static %}
-{% block title %}Clientes{% endblock %}
+{% load humanize %}
+{% block title %}Gestión de propiedades{% endblock %}
 {% load crispy_forms_tags %}
+
 {% block content %}
 
 {% if messages %}
@@ -19,13 +21,13 @@
 {% endif %}
 
 <div class="container-fluid mb-3">
-    <h2 style="text-align:center;">Gestión de Clientes</h2>
+    <h2 style="text-align:center;">Gestión de Propiedades</h2>
     <div class="row">
         <div class="col-lg-12 d-flex justify-content-between align-items-center mb-2">
             <div class="flex-grow-1 d-flex justify-content-center">
 
-            <form method="get" action="{% url 'cliente_list' %}" class="form-inline my-2 my-lg-0">
-                <input class="form-control mr-sm-2" name="q" type="search" placeholder="Buscar Clientes" aria-label="Search">
+            <form method="get" action="{% url 'listar' %}" class="form-inline my-2 my-lg-0">
+                <input class="form-control mr-sm-2" name="q" type="search" placeholder="Buscar Propiedades" aria-label="Search">
                 <button class="btn btn-outline-warning my-2 my-sm-0" type="submit">Buscar</button>
             </form>
         </div>
@@ -45,57 +47,57 @@
     <div class="col-lg-12">
         {% if request.GET.q %}
         <!-- Botón Reset -->
-        <a class="btn btn-secondary btn-sm me-2" href="{% url 'cliente_list' %}">
+        <a class="btn btn-secondary btn-sm me-2" href="{% url 'listar' %}">
             Volver <i class="fas fa-undo"></i>
         </a>
         {% endif %}
-    {% if clientes %} 
+    {% if propiedades %} 
     <!-- Tabla para mostrar clientes -->
-<div class="container mt-5">
+    <div class="container mt-5">
+
     
-    <div class="table-responsive">
-        <div class="d-flex justify-content-between align-items-center mb-3">
-            <div>
+        <div class="table-responsive">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <div>
+                
                 <button class="btn btn-primary btn-sm me-2"id="downloadButton" class="btn btn-success">Descargar<i class="fas fa-download"></i></button>
                 <button class="btn btn-primary btn-sm me-2"id="printButton" class="btn btn-info">Imprimir<i class="fas fa-print"></i></button>
             </div>
         </div>
-
     <table class="table table-bordered">
         <thead>
             <tr>
-                <th scope="col">Rut</th>
-                <th scope="col">Nombre</th>
+                <th scope="col">Numero rol</th>
+                <th scope="col">Tipo</th>
+                <th scope="col">Operacion</th>
+                <th scope="col">Estado</th>
+                <th scope="col">Valor Tasasion</th>
+                <th scope="col">Metros Cuadrados</th>
+                <th scope="col">Descripción</th>
+                <th scope="col">Nro.Habitaciones</th>
+                <th scope="col">Baños</th>
                 <th scope="col">Dirección</th>
-                <th scope="col">Teléfono</th>
-                <th scope="col">Correo</th>
-                <th scope="col">Fecha Creación</th>
-                <th scope="col">Tipo Cliente</th>
                 <th scope="col">Acciones</th>
             </tr>
         </thead>
         <tbody>
-            {% for cliente in clientes %}
+            {% for propiedad in propiedades %}
             <tr>
-                <td>{{ cliente.rut }}</td>
-                <td>{{ cliente.nombre }}</td>
-                <td>{{ cliente.direccion }}</td>
-                <td>{{ cliente.telefono }}</td>
-                <td>{{ cliente.correo }}</td>
-                <td>{{ cliente.fecha_creacion }}</td>
-                <td>
-                    {% for tipo in cliente.tipo_cliente_set.all %}
-                        <span class="badge badge-info">{{ tipo.tipo_cliente }}</span>
-                    {% endfor %}
-                </td>
+                <td>{{ propiedad.numero_rol}}</td>
+                <td>{{ propiedad.tipo_propiedad}}</td>
+                <td>{{ propiedad.tipo_operacion}}</td>
+                <td>{{ propiedad.estado}}</td>
+                <td>${{ propiedad.precio_tasacion|intcomma }}</td>
+                <td>{{ propiedad.metros_cuadrados|intcomma }}m²</td>
+                <td>{{ propiedad.descripcion_propiedad}}</td>
+                <td>{{ propiedad.nro_habitaciones}}</td>
+                <td>{{ propiedad.nro_bannos}}</td>
+                <td>{{ propiedad.direccion_propiedad}}</td>
                 <td class="d-flex justify-content-between">
-                    <button class="btn btn-sm btn-primary edit-btn mr-2" data-id="{{ cliente.id}}" data-rut="{{cliente.rut}}" data-nombre="{{ cliente.nombre }}" data-direccion="{{ cliente.direccion }}" data-telefono="{{ cliente.telefono }}" data-correo="{{ cliente.correo }}">
-                        <i class="fas fa-edit"></i>
+                    <button class="btn btn-sm btn-primary edit-btn mr-2" data-id="{{ propiedad.id}}" data-numero_rol="{{propiedad.numero_rol}}"  data-tipo_propiedad="{{ propiedad.tipo_propiedad }}" data-tipo_operacion="{{ propiedad.tipo_operacion }}" data-estado="{{propiedad.estado}}" data-precio_tasacion="{{ propiedad.precio_tasacion }}" data-descripcion_propiedad="{{ propiedad.descripcion_propiedad}}" data-metros_cuadrados="{{ propiedad.metros_cuadrados }}" data-nro_habitaciones="{{propiedad.nro_habitaciones }}" data-nro_bannos="{{propiedad.nro_bannos }}" data-direccion_propiedad="{{ propiedad.direccion_propiedad }}"  >
+                        <i class="fas fa-edit"  ></i>  
                     </button>
-                    <button class="btn btn-sm btn-success add-tipo-cliente-btn mr-2" data-id="{{ cliente.id }}">
-                        <i class="fas fa-user"></i>
-                    </button>
-                    <button class="btn btn-sm btn-danger delete-btn" data-id="{{ cliente.id }}">
+                    <button class="btn btn-sm btn-danger delete-btn" data-id="{{ propiedad.id }}">
                         <i class="fas fa-trash-alt"></i>
                     </button>
                 </td>
@@ -107,8 +109,8 @@
 </div> 
     {% else %}
     <div class="text-center mt-5">
-        <h3>Ningún cliente encontrado</h3>
-        <i class="fas fa-user-friends fa-5x"></i>
+        <h3>Ninguna propiedad encontrada</h3>
+        <i class="fas fa-home fa-5x"></i>
     </div>
     {% endif %}
 
@@ -116,15 +118,15 @@
 
 <!--Paginación-->
 
-{% if clientes.has_other_pages %}
+{% if propiedades.has_other_pages %}
     <div class="btn-group" role="group" aria-label="Item pagination">
-        {% if clientes.has_previous %}
+        {% if propiedades.has_previous %}
             <a href="?page=1" class="btn btn-outline-primary">&laquo;&laquo;</a>
-            <a href="?page={{ clientes.previous_page_number }}" class="btn btn-outline-primary">&laquo;</a>
+            <a href="?page={{ propiedades.previous_page_number }}" class="btn btn-outline-primary">&laquo;</a>
         {% endif %}
 
-        {% for page_number in clientes.paginator.page_range %}
-            {% if clientes.number == page_number %}
+        {% for page_number in propiedades.paginator.page_range %}
+            {% if propiedades.number == page_number %}
                 <button class="btn btn-outline-primary">
                     <span>{{ page_number }} <span class="sr-only">(current)</span></span>
                 </button>
@@ -135,9 +137,9 @@
             {% endif %}
         {% endfor %}
 
-        {% if clientes.has_next %}
-            <a href="?page={{ clientes.next_page_number }}" class="btn btn-outline-primary">&raquo;</a>
-            <a href="?page={{ clientes.paginator.num_pages }}" class="btn btn-outline-primary">&raquo;&raquo;</a>
+        {% if propiedades.has_next %}
+            <a href="?page={{ propiedades.next_page_number }}" class="btn btn-outline-primary">&raquo;</a>
+            <a href="?page={{ propidades.paginator.num_pages }}" class="btn btn-outline-primary">&raquo;&raquo;</a>
         {% endif %}
     </div>
 {% else %}
@@ -149,18 +151,18 @@
 </div>
 
 
-<!-- Modal para agregar cliente -->
+<!-- Modal para agregar propiedad -->
 <div class="modal fade" id="addModal" tabindex="-1" role="dialog" aria-labelledby="addModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="addModalLabel">Agregar Cliente</h5>
+                <h5 class="modal-title" id="addModalLabel">Agregar Propiedad</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
             <div class="modal-body">
-                <form id="addClienteForm">
+                <form id="addPropiedadesForm" method="post" enctype="multipart/form-data">
                     {% csrf_token %}
                     {{ form|crispy }}
                     <button type="submit" class="btn btn-primary">Agregar</button>
@@ -170,85 +172,97 @@
     </div>
 </div>
 
-<!-- Modal para editar cliente -->
+
+
+<!-- Modal para editar propiedad -->
 <div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="editModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="editModalLabel">Editar Cliente</h5>
+                <h5 class="modal-title" id="editModalLabel">Editar Propiedad</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
             <div class="modal-body">
-                <form id="editClienteForm">
+                <form id="editPropiedadesForm">
                     {% csrf_token %}
                     <input type="hidden" id="editId" name="id">
+                    
                     <div class="form-group">
-                        <label for="editRut">Rut</label>
-                        <input type="text" class="form-control" id="editRut" name="rut" required>
+                        <label for="editnumero_rol">Número de rol</label>
+                        <input type="text" class="form-control" id="editnumero_rol" name="numero_rol" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="editpropiedad">Propiedad</label>
+                        <input type="text" class="form-control" id="editpropiedad" name="tipo_propiedad" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="editoperacion">Operación</label>
+                        <input type="text" class="form-control" id="editoperacion" name="tipo_operacion" required></input>
+                    </div>
+                    
+                    <div class="form-group form-check">
+                        <input type="checkbox" class="form-check-input" id="editestado" name="estado">
+                        <label class="form-check-label" for="editestado">Estado</label>
+                      </div>
+
+                    <div class="form-group">
+                        <label for="editdescripcion">Descripcion</label>
+                        <textarea class="form-control" id="editdescripcion" rows="3" name="descripcion_propiedad"></textarea>
+                      </div>
+                    
+                    <div class="form-group">
+                        <label for="edittasasion">Tasación</label>
+                        <input type="text" class="form-control" id="edittasasion" name="precio_tasacion" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="editmetros">Metro Cuadrados</label>
+                        <input type="text" class="form-control" id="editmetros" name="metros_cuadrados" ed>
                     </div>
                     <div class="form-group">
-                        <label for="editNombre">Nombre</label>
-                        <input type="text" class="form-control" id="editNombre" name="nombre" required>
+                        <label for="edithabitacion">Habitación</label>
+                        <input type="text" class="form-control" id="edithabitacion" name="nro_habitaciones" required>
                     </div>
                     <div class="form-group">
-                        <label for="editDireccion">Dirección</label>
-                        <textarea class="form-control" id="editDireccion" name="direccion" rows="3"></textarea>
+                        <label for="editbanno">Baño</label>
+                        <input type="text" class="form-control" id="editbanno" name="nro_bannos" required>
                     </div>
                     <div class="form-group">
-                        <label for="editTelefono">Teléfono</label>
-                        <input type="text" class="form-control" id="editTelefono" name="telefono" required></input>
+                        <label for="editdirreccion">Dirección</label>
+                        <input type="text" class="form-control" id="editdirreccion" name="direccion_propiedad" required>
                     </div>
-                    <div class="form-group">
-                        <label for="editCorreo">Correo</label>
-                        <input type="email" class="form-control" id="editCorreo" name="correo" required>
-                    </div>
+
                     <button type="submit" class="btn btn-primary">Actualizar</button>
                 </form>
             </div>
-        </div>
+        </div>     
     </div>
 </div>
-
-
-<!-- Modal para agregar tipo de cliente -->
-<div class="modal fade" id="addTipoClienteModal" tabindex="-1" role="dialog" aria-labelledby="addTipoClienteModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="addTipoClienteModalLabel">Agregar Tipo de Cliente</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <form id="addTipoClienteForm">
-                    {% csrf_token %}
-                    {{ form_tipo_cliente|crispy }}
-                    <input type="hidden" id="clienteId" name="cliente_id">
-                    <button type="submit" class="btn btn-primary">Agregar</button>
-                </form>
-            </div>
-        </div>
-    </div>
-</div>
-
 
 <script>
 // Código para manejar los formularios y actualizar la tabla
 
-// Manejar el formulario de agregar cliente
-$('#addClienteForm').on('submit', function(e) {
+// Manejar el formulario de agregar propiedad
+$('#addPropiedadesForm').on('submit', function(e) {
     e.preventDefault();
+    
+    // Crear una instancia de FormData y agregar los datos del formulario
+    var formData = new FormData(this);
+
     $.ajax({
-        url: "{% url 'cliente_create' %}",
+        url: "{% url 'crear' %}",
         method: 'POST',
-        data: $(this).serialize(),
+        data: formData,
+        processData: false,  // Necesario para enviar datos de FormData tal como están
+        contentType: false,  // Necesario para enviar archivos y datos de FormData
         success: function(response) {
             Swal.fire({
                 icon: 'success',
-                title: 'Cliente agregado',
+                title: 'Propiedad agregada',
                 text: response.message,
                 timer: 2000,
                 showConfirmButton: false
@@ -260,21 +274,26 @@ $('#addClienteForm').on('submit', function(e) {
             Swal.fire({
                 icon: 'error',
                 title: 'Error',
-                text: 'Error al agregar cliente'
+                text: 'Error al agregar la propiedad'
             });
         }
     });
 });
 
-// Manejar el formulario de editar cliente
-$('#editClienteForm').on('submit', function(e) {
+
+$('#editPropiedadesForm').on('submit', function(e) {
     e.preventDefault();
     var id = $('#editId').val();
+    
+    // Obtener el valor del checkbox y agregarlo al formulario
+    var estado = $('#editestado').is(':checked');
+    var formData = $(this).serializeArray();
+    formData.push({name: 'estado', value: estado});
 
     // Mostrar alerta de confirmación
     Swal.fire({
         title: '¿Estás seguro?',
-        text: "Seguro que desea modificar este cliente?",
+        text: "Seguro que desea modificar esta propiedad?",
         icon: 'warning',
         showCancelButton: true,
         confirmButtonColor: '#3085d6',
@@ -285,14 +304,14 @@ $('#editClienteForm').on('submit', function(e) {
         if (result.isConfirmed) {
             // Si el usuario confirma, enviar el formulario
             $.ajax({
-                url: "cliente_update/" + id + "/",
+                url: "actualizar/" + id + "/",
                 method: 'POST',
-                data: $('#editClienteForm').serialize(), // Asegúrate de serializar el formulario correctamente
+                data: formData,
                 success: function(response) {
                     $('#editModal').modal('hide');
                     Swal.fire({
                         icon: 'success',
-                        title: 'Cliente actualizado',
+                        title: 'Propiedad actualizada',
                         text: response.message,
                         timer: 2000,
                         showConfirmButton: false
@@ -304,7 +323,7 @@ $('#editClienteForm').on('submit', function(e) {
                     Swal.fire({
                         icon: 'error',
                         title: 'Error',
-                        text: 'Error al actualizar cliente'
+                        text: 'Error al actualizar la propiedad'
                     });
                 }
             });
@@ -312,7 +331,9 @@ $('#editClienteForm').on('submit', function(e) {
     });
 });
 
-// Manejar el botón de eliminar cliente
+
+
+// Manejar el botón de eliminar propiedades
 $(document).on('click', '.delete-btn', function() {
     var id = $(this).data('id');
 
@@ -330,13 +351,13 @@ $(document).on('click', '.delete-btn', function() {
         if (result.isConfirmed) {
             // Si el usuario confirma, enviar solicitud AJAX para eliminar
             $.ajax({
-                url: "cliente_delete/" + id + "/",
+                url: "eliminar/" + id + "/",
                 method: 'POST',
                 headers: { 'X-CSRFToken': csrftoken },
                 success: function(response) {
                     Swal.fire({
                         icon: 'success',
-                        title: 'Cliente eliminado',
+                        title: 'Propiedad eliminada',
                         text: response.message,
                         timer: 2000,
                         showConfirmButton: false
@@ -357,58 +378,34 @@ $(document).on('click', '.delete-btn', function() {
 });
 
 
-// Mostrar modal para agregar tipo de cliente con datos del cliente seleccionado
-$(document).on('click', '.add-tipo-cliente-btn', function() {
-    var clienteId = $(this).data('id');
-    $('#clienteId').val(clienteId);
-    $('#addTipoClienteModal').modal('show');
-});
-
-// Manejar el formulario de agregar tipo de cliente
-$('#addTipoClienteForm').on('submit', function(e) {
-    e.preventDefault();
-    var clienteId = $('#clienteId').val();
-    $.ajax({
-        url: "{% url 'add_tipo_cliente' %}",
-        method: 'POST',
-        data: $(this).serialize(),
-        success: function(response) {
-            Swal.fire({
-                icon: 'success',
-                title: 'Tipo de cliente agregado',
-                text: response.message,
-                timer: 2000,
-                showConfirmButton: false
-            }).then(function() {
-                location.reload(); // Recargar la página para ver los cambios
-            });
-        },
-        error: function(response) {
-            Swal.fire({
-                icon: 'error',
-                title: 'Error',
-                text: 'Error al agregar tipo de cliente'
-            });
-        }
-    });
-});
-
 
 // Mostrar modal de edición con datos del cliente seleccionado
 $(document).on('click', '.edit-btn', function() {
     var id = $(this).data('id');
-    var rut = $(this).data('rut');
-    var nombre = $(this).data('nombre');
-    var direccion = $(this).data('direccion');
-    var telefono = $(this).data('telefono');
-    var correo = $(this).data('correo');
+    var numero_rol = $(this).data('numero_rol');
+    var tipo_propiedad = $(this).data('tipo_propiedad');
+    var tipo_operacion = $(this).data('tipo_operacion');
+    var estado = $(this).data('estado');
+    var descripcion_propiedad = $(this).data('descripcion_propiedad');
+    var metros_cuadrados = $(this).data('metros_cuadrados');
+    var nro_habitaciones = $(this).data('nro_habitaciones');
+    var nro_bannos = $(this).data('nro_bannos');
+    var precio_tasacion = $(this).data('precio_tasacion');
+    var direccion_propiedad = $(this).data('direccion_propiedad');
+
 
     $('#editId').val(id);
-    $('#editRut').val(rut);
-    $('#editNombre').val(nombre);
-    $('#editDireccion').val(direccion);
-    $('#editTelefono').val(telefono);
-    $('#editCorreo').val(correo);
+    $('#editnumero_rol').val(numero_rol);
+    $('#editpropiedad').val(tipo_propiedad);
+    $('#editoperacion').val(tipo_operacion);
+    $('#editestado').prop('checked', estado);
+    $('#editdescripcion').val(descripcion_propiedad);
+    $('#editmetros').val(metros_cuadrados);
+    $('#edithabitacion').val(nro_habitaciones);
+    $('#editbanno').val(nro_bannos);
+    $('#edittasasion').val(precio_tasacion);
+    $('#editdirreccion').val(direccion_propiedad);
+   
 
     $('#editModal').modal('show');
 });
@@ -440,6 +437,7 @@ $.ajaxSetup({
 
 
 </script>
+
 
 
 

@@ -1,0 +1,391 @@
+{% extends "core/base.html" %}
+{% load static %}
+{% load humanize %}
+{% block title %}Gestión de publicaciones{% endblock %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+
+{% if messages %}
+    {% for msg in messages %}
+       <script>
+           Swal.fire({
+               title: 'Exito!',
+               text: '{{msg}}',
+               icon: 'success',
+               confirmButtonText: 'Aceptar',
+               confirmButtonColor: 'Green'
+           });
+       </script>
+    {% endfor %}
+{% endif %}
+
+<div class="container-fluid mb-3">
+    <h2 style="text-align:center;">Gestión de Publicaciones</h2>
+    <div class="row">
+        <div class="col-lg-12 d-flex justify-content-between align-items-center mb-2">
+            <div class="flex-grow-1 d-flex justify-content-center">
+
+            <form method="get" action="{% url 'publicacion' %}" class="form-inline my-2 my-lg-0">
+                <input class="form-control mr-sm-2" name="q" type="search" placeholder="Buscar Publicaciones" aria-label="Search">
+                <button class="btn btn-outline-warning my-2 my-sm-0" type="submit">Buscar</button>
+            </form>
+        </div>
+       
+    </div>
+</div>
+<div class="d-flex justify-content-between align-items-center mb-3 container-fluid col-lg-1 text-lg-end" style="margin-right: 10px;">
+    <div>
+        <button class="btn btn-primary btn-sm me-2 btn-block" data-toggle="modal" data-target="#addModal " >
+            Agregar <i class="fas fa-plus"></i>
+        </button>
+    </div>
+</div>
+
+<div class="row px-xl-5">
+    <div class="col-lg-12">
+        {% if request.GET.q %}
+        <!-- Botón Reset -->
+        <a class="btn btn-secondary btn-sm me-2" href="{% url 'publicacion' %}">
+            Volver <i class="fas fa-undo"></i>
+        </a>
+        {% endif %}
+    <!--aqui va un if --> 
+    <!-- Tabla para mostrar clientes -->
+    <div class="container mt-5">
+
+        
+        <div class="table-responsive">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <div>
+                   
+                    <button class="btn btn-primary btn-sm me-2"id="downloadButton" class="btn btn-success">Descargar<i class="fas fa-download"></i></button>
+                    <button class="btn btn-primary btn-sm me-2"id="printButton" class="btn btn-info">Imprimir<i class="fas fa-print"></i></button>
+                </div>
+            </div>
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th scope="col">Moneda</th>
+                        <th scope="col">Precio Tasación</th>
+                        <th scope="col">Precio</th>
+                        <th scope="col">Estado</th>
+                        <th scope="col">iva</th>
+                        <th scope="col">% tasasion</th>
+                        <th scope="col">Comision</th>
+                        <th scope="col">rut cliente</th>
+                        <th scope="col">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    
+                    <tr>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        
+                        <td class="d-flex justify-content-between">
+                            <!-- boton de edicion seguir este ejemplo-->
+                            <button class="btn btn-sm btn-primary edit-btn mr-2">
+                                <i class="fas fa-edit"></i>  
+                            </button>
+                            <button class="btn btn-sm btn-danger delete-btn">
+                                <i class="fas fa-trash-alt"></i>
+                            </button>
+                        </td>
+                    </tr>
+                   
+                </tbody>
+            </table>
+
+        </div>
+    </div>
+    
+    <!--aqui va un else
+    <div class="text-center mt-5">
+        <h3>Ninguna publicación encontrada</h3>
+        <i class="bi bi-house fa-5x" ></i>
+    </div>
+    aqui va un endif -->
+
+
+
+<!--Paginación-->
+<!-- en esta parte debene cambiar todo por el modelo de publicacion-->
+<!--
+{% if propiedades.has_other_pages %}
+    <div class="btn-group" role="group" aria-label="Item pagination">
+        {% if propiedades.has_previous %}
+            <a href="?page=1" class="btn btn-outline-primary">&laquo;&laquo;</a>
+            <a href="?page={{ propiedades.previous_page_number }}" class="btn btn-outline-primary">&laquo;</a>
+        {% endif %}
+
+        {% for page_number in propiedades.paginator.page_range %}
+            {% if propiedades.number == page_number %}
+                <button class="btn btn-outline-primary">
+                    <span>{{ page_number }} <span class="sr-only">(current)</span></span>
+                </button>
+            {% else %}
+                <a href="?page={{ page_number }}" class="btn btn-outline-primary">
+                    {{ page_number }}
+                </a>
+            {% endif %}
+        {% endfor %}
+
+        {% if propiedades.has_next %}
+            <a href="?page={{ propiedades.next_page_number }}" class="btn btn-outline-primary">&raquo;</a>
+            <a href="?page={{ propidades.paginator.num_pages }}" class="btn btn-outline-primary">&raquo;&raquo;</a>
+        {% endif %}
+    </div>
+{% else %}
+    <p></p>
+{% endif %}
+-->
+
+        </div>
+    </div>
+</div>
+
+
+<!-- Modal para agregar publicaciones -->
+<div class="modal fade" id="addModal" tabindex="-1" role="dialog" aria-labelledby="addModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addModalLabel">Agregar Publicacion</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="addPublicacionForm">
+                    {% csrf_token %}
+                    {{ form|crispy }}
+                    <button type="submit" class="btn btn-primary">Agregar</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<!-- Modal para editar publicacion -->
+<!-- -->
+<div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="editModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editModalLabel">Editar Publicacion</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="editPublicacionForm">
+                    {% csrf_token %}
+                    <input type="hidden" id="editId" name="id">
+                    
+                    <div class="form-group">
+                        <label for="editnumero_rol">Precio</label>
+                        <input type="text" class="form-control" id="editnumero_rol" name="numero_rol" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="editpropiedad">% Comision</label>
+                        <input type="text" class="form-control" id="editpropiedad" name="tipo_propiedad" required>
+                    </div>
+
+                    
+                    <div class="form-group form-check">
+                        <input type="checkbox" class="form-check-input" id="editestado" name="estado">
+                        <label class="form-check-label" for="editestado">Destacada</label>
+                      </div>
+                    <button type="submit" class="btn btn-primary">Actualizar</button>
+                </form>
+            </div>
+        </div>     
+    </div>
+</div>
+
+<script>
+// Código para manejar los formularios y actualizar la tabla
+
+// Manejar el formulario de agregar Publicacion
+$('#addPublicacionForm').on('submit', function(e) {
+    e.preventDefault();
+    $.ajax({
+        url: "{% url 'crear' %}", // ingresar url donde estara la funcion de crear publicacion
+        method: 'POST',
+        data: $(this).serialize(),
+        success: function(response) {
+            Swal.fire({
+                icon: 'success',
+                title: 'Publicacion agregada',
+                text: response.message,
+                timer: 2000,
+                showConfirmButton: false
+            }).then(function() {
+                location.reload(); // Recargar la página para ver los cambios
+            });
+        },
+        error: function(response) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'Error al agregar la publicacion'
+            });
+        }
+    });
+});
+
+// Manejar el formulario de editar publicacion
+$('#editPublicacionForm').on('submit', function(e) {
+    e.preventDefault();
+    var id = $('#editId').val();
+
+    // Mostrar alerta de confirmación
+    Swal.fire({
+        title: '¿Estás seguro?',
+        text: "Seguro que desea modificar esta publicacion?",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Sí, modificar',
+        cancelButtonText: 'Cancelar'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            // Si el usuario confirma, enviar el formulario
+            $.ajax({
+                url: "actualizar/" + id + "/",
+                method: 'POST',
+                data: $('#editPublicacionForm').serialize(), // Asegúrate de serializar el formulario correctamente
+                success: function(response) {
+                    $('#editModal').modal('hide');
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Publicidad actualizado',
+                        text: response.message,
+                        timer: 2000,
+                        showConfirmButton: false
+                    }).then(function() {
+                        location.reload(); // Recargar la página para ver los cambios
+                    });
+                },
+                error: function(response) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'Error al actualizar Publicacion'
+                    });
+                }
+            });
+        }
+    });
+});
+
+// Manejar el botón de eliminar cliente
+$(document).on('click', '.delete-btn', function() {
+    var id = $(this).data('id');
+
+    // Mostrar alerta de confirmación
+    Swal.fire({
+        title: '¿Estás seguro?',
+        text: "¡No podrás revertir esto!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Sí, eliminarlo!',
+        cancelButtonText: 'Cancelar'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            // Si el usuario confirma, enviar solicitud AJAX para eliminar
+            $.ajax({
+                url: "eliminar/" + id + "/",
+                method: 'POST',
+                headers: { 'X-CSRFToken': csrftoken },
+                success: function(response) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Cliente eliminado',
+                        text: response.message,
+                        timer: 2000,
+                        showConfirmButton: false
+                    }).then(function() {
+                        location.reload(); // Recargar la página para ver los cambios
+                    });
+                },
+                error: function(response) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'Error al eliminar cliente'
+                    });
+                }
+            });
+        }
+    });
+});
+
+
+
+// Mostrar modal de edición con datos del cliente seleccionado
+$(document).on('click', '.edit-btn', function() {
+    var id = $(this).data('id');
+    var precio = $(this).data('precio');
+    var porctje_comision = $(this).data('porctje_comision');
+    var monto_comision = $(this).data('monto_comision');
+    var es_destacado = $(this).data('es_destacado');
+    
+
+
+    $('#editId').val(id);
+    $('#editprecio').val(numero_rol);
+    $('#editporctje_comision').val(tipo_propiedad);
+    $('#editmonto_comision').val(descripcion_propiedad);
+    $('#edites_destacado').val(metros_cuadrados);
+
+   
+
+    $('#editModal').modal('show');
+});
+
+// CSRF token setup for AJAX
+function getCookie(name) {
+    var cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        var cookies = document.cookie.split(';');
+        for (var i = 0; i < cookies.length; i++) {
+            var cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+var csrftoken = getCookie('csrftoken');
+
+$.ajaxSetup({
+    beforeSend: function(xhr, settings) {
+        if (!(/^http:.*/.test(settings.url) || /^https:.*/.test(settings.url))) {
+            xhr.setRequestHeader("X-CSRFToken", csrftoken);
+        }
+    }
+});
+
+
+</script>
+
+
+
+
+{% endblock %}

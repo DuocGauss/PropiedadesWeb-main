@@ -1,0 +1,24 @@
+{% extends "core/base.html" %}
+{% load static %}
+{% block title %}Propietarios{% endblock %}
+{% load crispy_forms_tags %}
+{% block content %}
+
+{% if messages %}
+    {% for msg in messages %}
+       <script>
+           Swal.fire({
+               title: 'Exito!',
+               text: '{{msg}}',
+               icon: 'success',
+               confirmButtonText: 'Aceptar',
+               confirmButtonColor: 'Green'
+           });
+       </script>
+    {% endfor %}
+{% endif %}
+
+
+
+
+{% endblock %}

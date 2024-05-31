@@ -6,21 +6,20 @@
 
 
 {% if messages %}
-    {% for msg in messages %}
-       <script>
-           Swal.fire({
-               title: 'Exito!',
-               text: '{{msg}}',
-               icon: 'success',
-               confirmButtonText: 'Aceptar',
-               confirmButtonColor: 'Green'
-           });
-       </script>
-    {% endfor %}
+{% for msg in messages %}
+<script>
+    Swal.fire({
+        title: 'Exito!',
+        text: '{{msg}}',
+        icon: 'success',
+        confirmButtonText: 'Aceptar',
+        confirmButtonColor: 'Green'
+    });
+</script>
+{% endfor %}
 {% endif %}
 
-
-<!-- Carousel Start -->
+<!-- Inicio del carusel -->
 <div class="container-fluid mb-3">
     <div class="row px-xl-5">
         <div class="col-lg-8">
@@ -32,44 +31,46 @@
                 </ol>
                 <div class="carousel-inner">
                     <div class="carousel-item position-relative active" style="height: 430px;">
-                        <img class="position-absolute w-100 h-100" src="{% static 'core/'%}img/carousel-1.jpg"
+                        <img class="position-absolute w-100 h-100" src="{% static 'core/img/carousel_1.jpg'%}"
                             style="object-fit: cover;">
                         <div class="carousel-caption d-flex flex-column align-items-center justify-content-center">
                             <div class="p-3" style="max-width: 700px;">
-                                <h1 class="display-4 text-white mb-3 animate__animated animate__fadeInDown">Men
-                                    Fashion</h1>
-                                <p class="mx-md-5 px-5 animate__animated animate__bounceIn">Lorem rebum magna amet
-                                    lorem magna erat diam stet. Sadips duo stet amet amet ndiam elitr ipsum diam</p>
+                                <h1 class="display-4 text-white mb-3 animate__animated animate__fadeInDown">Portal
+                                    Inmobiliario</h1>
+                                <p class="mx-md-5 px-5 animate__animated animate__bounceIn">Encuentra las mejores
+                                    propiedades
+                                    para comprar or arrendar en todo Chile
+                                </p>
                                 <a class="btn btn-outline-light py-2 px-4 mt-3 animate__animated animate__fadeInUp"
-                                    href="#">Shop Now</a>
+                                    href="#">Buscar Propiedades</a>
                             </div>
                         </div>
                     </div>
                     <div class="carousel-item position-relative" style="height: 430px;">
-                        <img class="position-absolute w-100 h-100" src="{% static 'core/'%}img/carousel-2.jpg"
+                        <img class="position-absolute w-100 h-100" src="{% static 'core/'%}img/carousel_2.jpg"
                             style="object-fit: cover;">
                         <div class="carousel-caption d-flex flex-column align-items-center justify-content-center">
                             <div class="p-3" style="max-width: 700px;">
-                                <h1 class="display-4 text-white mb-3 animate__animated animate__fadeInDown">Women
-                                    Fashion</h1>
-                                <p class="mx-md-5 px-5 animate__animated animate__bounceIn">Lorem rebum magna amet
-                                    lorem magna erat diam stet. Sadips duo stet amet amet ndiam elitr ipsum diam</p>
+                                <h1 class="display-4 text-white mb-3 animate__animated animate__fadeInDown">Portal
+                                    Inmobiliario</h1>
+                                <p class="mx-md-5 px-5 animate__animated animate__bounceIn">Publica gratis tus
+                                    propiedades con nosotros</p>
                                 <a class="btn btn-outline-light py-2 px-4 mt-3 animate__animated animate__fadeInUp"
-                                    href="#">Shop Now</a>
+                                    href="#">Publicar Propiedades</a>
                             </div>
                         </div>
                     </div>
                     <div class="carousel-item position-relative" style="height: 430px;">
-                        <img class="position-absolute w-100 h-100" src="{% static 'core/'%}img/carousel-3.jpg"
+                        <img class="position-absolute w-100 h-100" src="{% static 'core/'%}img/carousel_3.jpg"
                             style="object-fit: cover;">
                         <div class="carousel-caption d-flex flex-column align-items-center justify-content-center">
                             <div class="p-3" style="max-width: 700px;">
-                                <h1 class="display-4 text-white mb-3 animate__animated animate__fadeInDown">Kids
-                                    Fashion</h1>
-                                <p class="mx-md-5 px-5 animate__animated animate__bounceIn">Lorem rebum magna amet
-                                    lorem magna erat diam stet. Sadips duo stet amet amet ndiam elitr ipsum diam</p>
+                                <h1 class="display-4 text-white mb-3 animate__animated animate__fadeInDown">Portal
+                                    Inmobiliario</h1>
+                                <p class="mx-md-5 px-5 animate__animated animate__bounceIn">Encuentra oportunidades de
+                                    inversion en proyectos inmobiliarios atractivos</p>
                                 <a class="btn btn-outline-light py-2 px-4 mt-3 animate__animated animate__fadeInUp"
-                                    href="#">Shop Now</a>
+                                    href="#">Invertir</a>
                             </div>
                         </div>
                     </div>
@@ -78,26 +79,369 @@
         </div>
         <div class="col-lg-4">
             <div class="product-offer mb-30" style="height: 200px;">
-                <img class="img-fluid" src="{% static 'core/'%}img/offer-1.jpg" alt="">
+                <img class="img-fluid" src="{% static 'core/img/interior-1.jpg'%}" alt="">
                 <div class="offer-text">
-                    <h6 class="text-white text-uppercase">Save 20%</h6>
-                    <h3 class="text-white mb-3">Special Offer</h3>
-                    <a href="" class="btn btn-primary">Shop Now</a>
+                    <h6 class="text-white text-uppercase">Buscas Arriendos</h6>
+                    <h3 class="text-white mb-3">AQUI</h3>
+                    <a href="" class="btn btn-primary">Ver</a>
                 </div>
             </div>
             <div class="product-offer mb-30" style="height: 200px;">
-                <img class="img-fluid" src="{% static 'core/'%}img/offer-2.jpg" alt="">
+                <img class="img-fluid" src="{% static 'core/img/comprar-vivienda.jpg'%}" alt="">
                 <div class="offer-text">
-                    <h6 class="text-white text-uppercase">Save 20%</h6>
-                    <h3 class="text-white mb-3">Special Offer</h3>
-                    <a href="" class="btn btn-primary">Shop Now</a>
+                    <h6 class="text-white text-uppercase">Buscas Comprar</h6>
+                    <h3 class="text-white mb-3">AQUI</h3>
+                    <a href="" class="btn btn-primary">Ver</a>
                 </div>
             </div>
         </div>
     </div>
 </div>
-<!-- Carousel End -->
+<!-- Final del carusel -->
 
+<!-- Shop Start -->
+<div class="container-fluid">
+    <div class="row px-xl-5">
+        <!-- Sidebar Start -->
+        <div class="col-lg-3 col-md-4">
+            <!-- Filtro por Venta, Arriendo -->
+            <h5 class="section-title position-relative text-uppercase mb-3"><span class="bg-secondary pr-3">Tipo de
+                    busqueda</span></h5>
+            <div class="bg-light p-4 mb-30">
+                <form>
+                    <div class="custom-control custom-checkbox d-flex align-items-center justify-content-between mb-3">
+                        <input type="checkbox" class="custom-control-input" checked id="venta">
+                        <label class="custom-control-label" for="price-all">Venta</label>
+                        <span class="badge border font-weight-normal">1000</span>
+                    </div>
+                    <div class="custom-control custom-checkbox d-flex align-items-center justify-content-between mb-3">
+                        <input type="checkbox" class="custom-control-input" id="arriendo">
+                        <label class="custom-control-label" for="price-1">Arriendo</label>
+                        <span class="badge border font-weight-normal">150</span>
+                    </div>
+                    <div class="custom-control custom-checkbox d-flex align-items-center justify-content-between mb-3">
+                        <input type="checkbox" class="custom-control-input" id="permuta">
+                        <label class="custom-control-label" for="price-1">Permuta</label>
+                        <span class="badge border font-weight-normal">150</span>
+                    </div>
+                    <div class="dropdown justify-content-between mb-3">
+                        <label for="regiones">Buscar por región:</label>
+                        <select id="regiones" onchange="cargarComunas()">
+                            <option value="">Seleccionar región</option>
+                        </select>
+
+                        <label for="comunas">Buscar por comuna:</label>
+                        <select id="comunas">
+                            <option value="">Seleccionar comuna</option>
+                        </select>
+                    </div>
+                </form>
+            </div>
+            <!-- Final del filtro -->
+
+            <!-- Filtro por tipo de propiedad -->
+            <h5 class="section-title position-relative text-uppercase mb-3"><span class="bg-secondary pr-3">Filtrar por
+                    tipo de propiedad</span></h5>
+            <div class="bg-light p-4 mb-30">
+                <form>
+                    <div class="custom-control custom-checkbox d-flex align-items-center justify-content-between mb-3">
+                        <input type="checkbox" class="custom-control-input" checked id="casa">
+                        <label class="custom-control-label" for="price-all">Casa</label>
+                    </div>
+                    <div class="custom-control custom-checkbox d-flex align-items-center justify-content-between mb-3">
+                        <input type="checkbox" class="custom-control-input" checked id="departamento">
+                        <label class="custom-control-label" for="price-all">Departamento</label>
+                    </div>
+                    <div class="custom-control custom-checkbox d-flex align-items-center justify-content-between mb-3">
+                        <input type="checkbox" class="custom-control-input" checked id="oficina">
+                        <label class="custom-control-label" for="price-all">Oficina</label>
+                    </div>
+                    <div class="custom-control custom-checkbox d-flex align-items-center justify-content-between mb-3">
+                        <input type="checkbox" class="custom-control-input" checked id="bodega">
+                        <label class="custom-control-label" for="price-all">Bodega</label>
+                    </div>
+                </form>
+            </div>
+            <!-- Final del filtro -->
+
+            <!-- Filtro por precio -->
+            <h5 class="section-title position-relative text-uppercase mb-3"><span class="bg-secondary pr-3">Filtrar por
+                    valor</span></h5>
+            <div class="bg-light p-4 mb-30">
+                <form>
+                    <div class="custom-control custom-checkbox d-flex align-items-center justify-content-between mb-3">
+                        <input type="checkbox" class="custom-control-input" checked id="price-all">
+                        <label class="custom-control-label" for="price-all">Todos los valores</label>
+                        <span class="badge border font-weight-normal">1000</span>
+                    </div>
+                    <div class="custom-control custom-checkbox d-flex align-items-center justify-content-between mb-3">
+                        <input type="checkbox" class="custom-control-input" id="price-1">
+                        <label class="custom-control-label" for="price-1">$0 - $100</label>
+                        <span class="badge border font-weight-normal">150</span>
+                    </div>
+                    <div class="custom-control custom-checkbox d-flex align-items-center justify-content-between mb-3">
+                        <input type="checkbox" class="custom-control-input" id="price-2">
+                        <label class="custom-control-label" for="price-2">$100 - $200</label>
+                        <span class="badge border font-weight-normal">295</span>
+                    </div>
+                    <div class="custom-control custom-checkbox d-flex align-items-center justify-content-between mb-3">
+                        <input type="checkbox" class="custom-control-input" id="price-3">
+                        <label class="custom-control-label" for="price-3">$200 - $300</label>
+                        <span class="badge border font-weight-normal">246</span>
+                    </div>
+                    <div class="custom-control custom-checkbox d-flex align-items-center justify-content-between mb-3">
+                        <input type="checkbox" class="custom-control-input" id="price-4">
+                        <label class="custom-control-label" for="price-4">$300 - $400</label>
+                        <span class="badge border font-weight-normal">145</span>
+                    </div>
+                    <div class="custom-control custom-checkbox d-flex align-items-center justify-content-between">
+                        <input type="checkbox" class="custom-control-input" id="price-5">
+                        <label class="custom-control-label" for="price-5">$400 - $500</label>
+                        <span class="badge border font-weight-normal">168</span>
+                    </div>
+                </form>
+            </div>
+            <!-- Final del filtro -->
+
+            <!-- Filtro por fecha de publicación -->
+            <h5 class="section-title position-relative text-uppercase mb-3"><span class="bg-secondary pr-3">Filtrar por
+                    fecha de publicación</span></h5>
+            <div class="bg-light p-4 mb-30">
+                <form>
+                    <div class="custom-control custom-checkbox d-flex align-items-center justify-content-between mb-3">
+                        <input type="checkbox" class="custom-control-input" checked id="todo">
+                        <label class="custom-control-label" for="price-all">Todas las propiedades</label>
+                    </div>
+                    <div class="custom-control custom-checkbox d-flex align-items-center justify-content-between mb-3">
+                        <input type="checkbox" class="custom-control-input" checked id="horas">
+                        <label class="custom-control-label" for="price-all">Últimas 24 horas</label>
+                    </div>
+                    <div class="custom-control custom-checkbox d-flex align-items-center justify-content-between mb-3">
+                        <input type="checkbox" class="custom-control-input" checked id="semana">
+                        <label class="custom-control-label" for="price-all">Última semana</label>
+                    </div>
+                    <div class="custom-control custom-checkbox d-flex align-items-center justify-content-between mb-3">
+                        <input type="checkbox" class="custom-control-input" checked id="mes">
+                        <label class="custom-control-label" for="price-all">Último mes</label>
+                    </div>
+                </form>
+            </div>
+            <!-- Final del filtro -->
+
+        </div>
+        <!-- Shop Sidebar End -->
+
+        <!-- Shop Product Start -->
+        <div class="col-lg-9 col-md-8">
+            <div class="row pb-3">
+                <div class="col-lg-4 col-md-6 col-sm-6 pb-1">
+                    <div class="product-item bg-light mb-4">
+                        <div class="product-img position-relative overflow-hidden">
+                            <img class="img-fluid w-100" src="{% static 'core/'%}img/casa-1.jpg" alt="">
+                        </div>
+                        <div class="text-center py-4">
+                            <a class="h6 text-decoration-none text-truncate" href="">Casa 1</a>
+                            <div class="d-flex align-items-center justify-content-center mt-2">
+                                <h5>$12.300.000</h5>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6 col-sm-6 pb-1">
+                    <div class="product-item bg-light mb-4">
+                        <div class="product-img position-relative overflow-hidden">
+                            <img class="img-fluid w-100" src="{% static 'core/'%}img/casa-1.jpg" alt="">
+                        </div>
+                        <div class="text-center py-4">
+                            <a class="h6 text-decoration-none text-truncate" href="">Casa 1</a>
+                            <div class="d-flex align-items-center justify-content-center mt-2">
+                                <h5>$12.300.000</h5>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6 col-sm-6 pb-1">
+                    <div class="product-item bg-light mb-4">
+                        <div class="product-img position-relative overflow-hidden">
+                            <img class="img-fluid w-100" src="{% static 'core/'%}img/casa-1.jpg" alt="">
+                        </div>
+                        <div class="text-center py-4">
+                            <a class="h6 text-decoration-none text-truncate" href="">Casa 1</a>
+                            <div class="d-flex align-items-center justify-content-center mt-2">
+                                <h5>$12.300.000</h5>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6 col-sm-6 pb-1">
+                    <div class="product-item bg-light mb-4">
+                        <div class="product-img position-relative overflow-hidden">
+                            <img class="img-fluid w-100" src="{% static 'core/'%}img/casa-1.jpg" alt="">
+                        </div>
+                        <div class="text-center py-4">
+                            <a class="h6 text-decoration-none text-truncate" href="">Casa 1</a>
+                            <div class="d-flex align-items-center justify-content-center mt-2">
+                                <h5>$12.300.000</h5>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6 col-sm-6 pb-1">
+                    <div class="product-item bg-light mb-4">
+                        <div class="product-img position-relative overflow-hidden">
+                            <img class="img-fluid w-100" src="{% static 'core/'%}img/casa-1.jpg" alt="">
+                        </div>
+                        <div class="text-center py-4">
+                            <a class="h6 text-decoration-none text-truncate" href="">Casa 1</a>
+                            <div class="d-flex align-items-center justify-content-center mt-2">
+                                <h5>$12.300.000</h5>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6 col-sm-6 pb-1">
+                    <div class="product-item bg-light mb-4">
+                        <div class="product-img position-relative overflow-hidden">
+                            <img class="img-fluid w-100" src="{% static 'core/'%}img/casa-1.jpg" alt="">
+                        </div>
+                        <div class="text-center py-4">
+                            <a class="h6 text-decoration-none text-truncate" href="">Casa 1</a>
+                            <div class="d-flex align-items-center justify-content-center mt-2">
+                                <h5>$12.300.000</h5>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12">
+                    
+                        <ul class="pagination justify-content-center">
+                            <li class="page-item disabled"><a class="page-link" href="#">Atrás</span></a></li>
+                            <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                            <li class="page-item"><a class="page-link" href="#">2</a></li>
+                            <li class="page-item"><a class="page-link" href="#">3</a></li>
+                            <li class="page-item"><a class="page-link" href="#">Siguiente</a></li>
+                        </ul>
+                    
+                </div>
+            </div>
+        </div>
+        <!-- Shop Product End -->
+
+        <!-- Json Regiones y comunas -->
+        <script>
+            // JSON con las regiones y comunas
+            var data = {
+                "regiones": [
+                    {
+                        "region": "Arica y Parinacota",
+                        "comunas": ["Arica", "Camarones", "Putre", "General Lagos"]
+                    },
+                    {
+                        "region": "Tarapacá",
+                        "comunas": ["Iquique", "Alto Hospicio", "Pozo Almonte", "Camiña", "Colchane", "Huara", "Pica"]
+                    },
+                    {
+                        "region": "Antofagasta",
+                        "comunas": ["Antofagasta", "Mejillones", "Sierra Gorda", "Taltal", "Calama", "Ollagüe", "San Pedro de Atacama", "Tocopilla", "María Elena"]
+                    },
+                    {
+                        "region": "Atacama",
+                        "comunas": ["Copiapó", "Caldera", "Tierra Amarilla", "Chañaral", "Diego de Almagro", "Vallenar", "Alto del Carmen", "Freirina", "Huasco"]
+                    },
+                    {
+                        "region": "Coquimbo",
+                        "comunas": ["La Serena", "Coquimbo", "Andacollo", "La Higuera", "Paiguano", "Vicuña", "Illapel", "Canela", "Los Vilos", "Salamanca", "Ovalle", "Combarbalá", "Monte Patria", "Punitaqui", "Río Hurtado"]
+                    },
+                    {
+                        "region": "Valparaíso",
+                        "comunas": ["Valparaíso", "Casablanca", "Concón", "Juan Fernández", "Puchuncaví", "Quintero", "Viña del Mar", "Isla de Pascua", "Los Andes", "Calle Larga", "Rinconada", "San Esteban", "La Ligua", "Cabildo", "Papudo", "Petorca", "Zapallar", "Quillota", "Calera", "Hijuelas", "La Cruz", "Nogales", "San Antonio", "Algarrobo", "Cartagena", "El Quisco", "El Tabo", "Santo Domingo", "San Felipe", "Catemu", "Llaillay", "Panquehue", "Putaendo", "Santa María", "Quilpué", "Limache", "Olmué", "Villa Alemana"]
+                    },
+                    {
+                        "region": "Bernardo O’Higgins",
+                        "comunas": ["Rancagua", "Codegua", "Coinco", "Coltauco", "Doñihue", "Graneros", "Las Cabras", "Machalí", "Malloa", "Mostazal", "Olivar", "Peumo", "Pichidegua", "Quinta de Tilcoco", "Rengo", "Requínoa", "San Vicente", "Pichilemu", "La Estrella", "Litueche", "Marchihue", "Navidad", "Paredones", "San Fernando", "Chépica", "Chimbarongo", "Lolol", "Nancagua", "Palmilla", "Peralillo", "Placilla", "Pumanque", "Santa Cruz"]
+                    },
+                    {
+                        "region": "Región del Maule",
+                        "comunas": ["Talca", "Constitución", "Curepto", "Empedrado", "Maule", "Pelarco", "Pencahue", "Río Claro", "San Clemente", "San Rafael", "Cauquenes", "Chanco", "Pelluhue", "Curicó", "Hualañé", "Licantén", "Molina", "Rauco", "Romeral", "Sagrada Familia", "Teno", "Vichuquén", "Linares", "Colbún", "Longaví", "Parral", "Retiro", "San Javier", "Villa Alegre", "Yerbas Buenas"]
+                    },
+                    {
+                        "region": "Región de Ñuble",
+                        "comunas": ["Cobquecura", "Coelemu", "Ninhue", "Portezuelo", "Quirihue", "Ránquil", "Treguaco", "Bulnes", "Chillán Viejo", "Chillán", "El Carmen", "Pemuco", "Pinto", "Quillón", "San Ignacio", "Yungay", "Coihueco", "Ñiquén", "San Carlos", "San Fabián", "San Nicolás"]
+                    },
+                    {
+                        "region": "Región del Biobío",
+                        "comunas": ["Concepción", "Coronel", "Chiguayante", "Florida", "Hualqui", "Lota", "Penco", "San Pedro de la Paz", "Santa Juana", "Talcahuano", "Tomé", "Hualpén", "Lebu", "Arauco", "Cañete", "Contulmo", "Curanilahue", "Los Álamos", "Tirúa", "Los Ángeles", "Antuco", "Cabrero", "Laja", "Mulchén", "Nacimiento", "Negrete", "Quilaco", "Quilleco", "San Rosendo", "Santa Bárbara", "Tucapel", "Yumbel", "Alto Biobío"]
+                    },
+                    {
+                        "region": "Región de la Araucanía",
+                        "comunas": ["Temuco", "Carahue", "Cunco", "Curarrehue", "Freire", "Galvarino", "Gorbea", "Lautaro", "Loncoche", "Melipeuco", "Nueva Imperial", "Padre las Casas", "Perquenco", "Pitrufquén", "Pucón", "Saavedra", "Teodoro Schmidt", "Toltén", "Vilcún", "Villarrica", "Cholchol", "Angol", "Collipulli", "Curacautín", "Ercilla", "Lonquimay", "Los Sauces", "Lumaco", "Purén", "Renaico", "Traiguén", "Victoria"]
+                    },
+                    {
+                        "region": "Región de Los Ríos",
+                        "comunas": ["Valdivia", "Corral", "Lanco", "Los Lagos", "Máfil", "Mariquina", "Paillaco", "Panguipulli", "La Unión", "Futrono", "Lago Ranco", "Río Bueno"]
+                    },
+                    {
+                        "region": "Región de Los Lagos",
+                        "comunas": ["Puerto Montt", "Calbuco", "Cochamó", "Fresia", "Frutillar", "Los Muermos", "Llanquihue", "Maullín", "Puerto Varas", "Castro", "Ancud", "Chonchi", "Curaco de Vélez", "Dalcahue", "Puqueldón", "Queilén", "Quellón", "Quemchi", "Quinchao", "Osorno", "Puerto Octay", "Purranque", "Puyehue", "Río Negro", "San Juan de la Costa", "San Pablo", "Chaitén", "Futaleufú", "Hualaihué", "Palena"]
+                    },
+                    {
+                        "region": "Región Aisén",
+                        "comunas": ["Coihaique", "Lago Verde", "Aisén", "Cisnes", "Guaitecas", "Cochrane", "O’Higgins", "Tortel", "Chile Chico", "Río Ibáñez"]
+                    },
+                    {
+                        "region": "Región de Magallanes",
+                        "comunas": ["Punta Arenas", "Laguna Blanca", "Río Verde", "San Gregorio", "Cabo de Hornos (Ex Navarino)", "Antártica", "Porvenir", "Primavera", "Timaukel", "Natales", "Torres del Paine"]
+                    },
+                    {
+                        "region": "Región Metropolitana",
+                        "comunas": ["Cerrillos", "Cerro Navia", "Conchalí", "El Bosque", "Estación Central", "Huechuraba", "Independencia", "La Cisterna", "La Florida", "La Granja", "La Pintana", "La Reina", "Las Condes", "Lo Barnechea", "Lo Espejo", "Lo Prado", "Macul", "Maipú", "Ñuñoa", "Pedro Aguirre Cerda", "Peñalolén", "Providencia", "Pudahuel", "Quilicura", "Quinta Normal", "Recoleta", "Renca", "Santiago", "San Joaquín", "San Miguel", "San Ramón", "Vitacura", "Puente Alto", "Pirque", "San José de Maipo", "Colina", "Lampa", "Tiltil", "San Bernardo", "Buin", "Calera de Tango", "Paine", "Melipilla", "Alhué", "Curacaví", "María Pinto", "San Pedro", "Talagante", "El Monte", "Isla de Maipo", "Padre Hurtado", "Peñaflor"]
+                    }
+                ]
+            };
+            // Obtener el elemento select de regiones
+            var selectRegiones = document.getElementById("regiones");
+            // Obtener el elemento select de comunas
+            var selectComunas = document.getElementById("comunas");
+
+            // Función para cargar las opciones de comunas según la región seleccionada
+            function cargarComunas() {
+                // Limpiar las opciones anteriores
+                selectComunas.innerHTML = "<option value=''>Seleccionar comuna</option>";
+
+                // Obtener la región seleccionada
+                var regionSeleccionada = selectRegiones.value;
+
+                // Buscar la región en el JSON
+                var regionEncontrada = data.regiones.find(function (region) {
+                    return region.region === regionSeleccionada;
+                });
+
+                // Si se encontró la región, cargar las comunas correspondientes
+                if (regionEncontrada) {
+                    regionEncontrada.comunas.forEach(function (comuna) {
+                        var option = document.createElement("option");
+                        option.text = comuna;
+                        selectComunas.add(option);
+                    });
+                }
+            }
+
+            // Función para cargar las opciones de regiones en el select de regiones
+            function cargarRegiones() {
+                // Limpiar las opciones anteriores
+                selectRegiones.innerHTML = "<option value=''>Seleccionar región</option>";
+
+                // Iterar sobre cada región en el JSON y agregarla como opción
+                data.regiones.forEach(function (region) {
+                    var option = document.createElement("option");
+                    option.text = region.region;
+                    selectRegiones.add(option);
+                });
+            }
+
+            // Cargar las regiones al cargar la página
+            cargarRegiones();
+        </script>
 
 
 {% endblock %}

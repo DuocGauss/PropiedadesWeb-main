@@ -1,6 +1,6 @@
 from django.shortcuts import render
-from .forms import frmRegistro, frmLogin, frmCliente, frmClienteEdit, frmTipoCliente
-from .models import Cliente
+from .forms import frmRegistro, frmLogin, frmCliente, frmClienteEdit, frmTipoCliente, frmCrearPropiedad, frmActualizarPropiedad
+from .models import Cliente, Propiedad
 from django.contrib import messages
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login, authenticate, logout
@@ -105,9 +105,14 @@ def cliente_create(request):
     if request.method == 'POST':
         form = frmCliente(request.POST)
         if form.is_valid():
-            cliente = form.save(commit=False)  # Crear el objeto Cliente sin guardarlo aún
-            cliente.empresa = request.user 
-            form.save()
+            rut = form.cleaned_data['rut']
+            cliente = form.save(commit=False)  # Crear el objeto Cliente sin guardarlo aún 
+            empresa = request.user
+            if Cliente.objects.filter(rut=rut, empresa=empresa).exists():
+                return JsonResponse({'error': 'El cliente ya existe en esta empresa'}, status=400)
+            else:
+                cliente.empresa = empresa
+                form.save()
             return JsonResponse({'message': 'Cliente agregado correctamente'})
     return JsonResponse({'error': 'Formulario no válido'})
 
@@ -117,8 +122,13 @@ def cliente_update(request, pk):
     if request.method == 'POST':
         form = frmClienteEdit(request.POST, instance=cliente)
         if form.is_valid():
-            form.save()
-            return JsonResponse({'message': 'Cliente actualizado correctamente'})
+            rut = form.cleaned_data['rut']
+            empresa = request.user
+            if Cliente.objects.filter(rut=rut, empresa=empresa).exclude(pk=pk).exists():
+                return JsonResponse({'error': 'El cliente ya existe en esta empresa'}, status=400)
+            else:
+                form.save()
+                return JsonResponse({'message': 'Cliente actualizado correctamente'})
     return JsonResponse({'error': 'Formulario no válido'})
 
 
@@ -144,3 +154,87 @@ def add_tipo_cliente(request):
             tipo_cliente.save()
             return JsonResponse({'message': 'Tipo de cliente agregado correctamente'})
     return JsonResponse({'error': 'Formulario no válido'}, status=400)
+
+
+
+@login_required
+def listar_propiedades(request):
+    rut_empresa = request.user
+    propiedades = Propiedad.objects.filter(rut_empresa=rut_empresa).order_by('-id')
+    contexto = {}
+    form = frmCrearPropiedad()
+
+    default_page = 1
+    page = request.GET.get('page', default_page)
+    query = request.GET.get('q')
+
+    if query:
+        propiedades = propiedades.filter(
+            Q(numero_rol__icontains=query) |
+            Q(tipo_propiedad__icontains=query) |
+            Q(tipo_operacion__icontains=query) |
+            Q(metros_cuadrados__icontains=query) |
+            Q(precio_tasacion__icontains=query)
+        )
+
+    items_per_page = 5
+    paginator = Paginator(propiedades, items_per_page)
+
+    try:
+        propiedades = paginator.page(page)
+    except PageNotAnInteger:
+        propiedades = paginator.page(default_page)
+    except EmptyPage:
+        propiedades = paginator.page(paginator.num_pages)
+
+    contexto["propiedades"] = propiedades
+    contexto["form"] = form
+    return render(request, 'core/propiedades.html', contexto)
+
+
+def crear_propiedad(request):
+    if request.method == 'POST':
+        form = frmCrearPropiedad(request.POST, request.FILES)
+        if form.is_valid():
+            propiedad = form.save(commit=False)
+            propiedad.rut_empresa = request.user
+            form.save()
+            return JsonResponse({'message': 'Propiedad agregada correctamente'})
+    else:
+        form = frmCrearPropiedad()
+    return render(request, 'core/propiedades.html', {'form': form})
+
+
+def actualizar_propiedad(request, pk):
+    propiedad = get_object_or_404(Propiedad, pk=pk)
+    if request.method == 'POST':
+        form = frmActualizarPropiedad(request.POST, request.FILES, instance=propiedad)
+        if form.is_valid():
+            estado = request.POST.get('estado') == 'true'
+            propiedad.estado = estado
+            form.save()
+            return JsonResponse({'message': 'Propiedad actualizada correctamente'})
+    return JsonResponse({'error': 'Formulario no válido'})
+    
+
+@login_required
+def eliminar_propiedad(request, pk):
+    propiedad = get_object_or_404(Propiedad, pk=pk)
+    if request.method == 'POST':
+        propiedad.delete()
+        return JsonResponse({'message': 'Propiedad eliminada correctamente'})
+    return JsonResponse({'error': 'Método no permitido'}, status=405)
+
+
+
+def publicacion(request):
+    return render(request, 'core/publicacion.html')
+
+def op_venta(request):
+    return render(request, 'core/op_venta.html')
+
+def op_arriendo(request):
+    return render(request, 'core/op_arriendo.html')
+
+def propietarios(request):
+    return render(request, 'core/propietarios.html')
