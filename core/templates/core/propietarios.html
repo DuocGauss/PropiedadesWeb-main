@@ -75,16 +75,16 @@
         </tr>
     </thead>
     <tbody>
-        {% for contrato in contratos %}
+        {% for propietario in propietarios %}
         <tr>
-            <td>{{ contrato.rut_propietario.rut_propietario }}</td>
-            <td>{{ contrato.rut_propietario.nombre }}</td>
-            <td>{{ contrato.rut_propietario.telefono_1 }}</td>
-            <td>{{ contrato.rut_propietario.telefono_2 }}</td>
-            <td>{{ contrato.rut_propietario.correo }}</td>
+            <td>{{ propietario.rut_propietario }}</td>
+            <td>{{ propietario.nombre }}</td>
+            <td>{{ propietario.telefono_1 }}</td>
+            <td>{{ propietario.telefono_2 }}</td>
+            <td>{{ propietario.correo }}</td>
             <td>
                 <ul>
-                    {% for historial_contrato in contrato.rut_propietario.contrato_set.all %}
+                    {% for historial_contrato in propietario.contrato_set.all %}
                     <li>
                         Contrato ID: {{ historial_contrato.id_contrato }}, 
                         Fecha Inicio: {{ historial_contrato.fecha_firma }}, 
@@ -94,6 +94,9 @@
                 </ul>
             </td>
             <td class="d-flex justify-content-between">
+                <button class="btn btn-sm btn-success mr-2 add-contract-btn" data-rut_propietario="{{ propietario.rut_propietario }}" data-toggle="modal" data-target="#addModal ">
+                    <i class="fas fa-solid fa-file-contract"></i>
+                </button>
                 <button class="btn btn-sm btn-primary edit-btn mr-2">
                     <i class="fas fa-edit"></i>
                 </button>
@@ -117,15 +120,15 @@
 
 <!--Paginación-->
 
-{% if contratos.has_other_pages %}
+{% if propietarios.has_other_pages %}
     <div class="btn-group" role="group" aria-label="Item pagination">
-        {% if contratos.has_previous %}
+        {% if propietarios.has_previous %}
             <a href="?page=1" class="btn btn-outline-primary">&laquo;&laquo;</a>
-            <a href="?page={{ contratos.previous_page_number }}" class="btn btn-outline-primary">&laquo;</a>
+            <a href="?page={{ propietarios.previous_page_number }}" class="btn btn-outline-primary">&laquo;</a>
         {% endif %}
 
-        {% for page_number in contratos.paginator.page_range %}
-            {% if contratos.number == page_number %}
+        {% for page_number in propietarios.paginator.page_range %}
+            {% if propietarios.number == page_number %}
                 <button class="btn btn-outline-primary">
                     <span>{{ page_number }} <span class="sr-only">(current)</span></span>
                 </button>
@@ -136,9 +139,9 @@
             {% endif %}
         {% endfor %}
 
-        {% if contratos.has_next %}
-            <a href="?page={{ contratos.next_page_number }}" class="btn btn-outline-primary">&raquo;</a>
-            <a href="?page={{ contratos.paginator.num_pages }}" class="btn btn-outline-primary">&raquo;&raquo;</a>
+        {% if propietarios.has_next %}
+            <a href="?page={{ propietarios.next_page_number }}" class="btn btn-outline-primary">&raquo;</a>
+            <a href="?page={{ propietarios.paginator.num_pages }}" class="btn btn-outline-primary">&raquo;&raquo;</a>
         {% endif %}
     </div>
 {% else %}
@@ -149,5 +152,91 @@
     </div>
 </div>
 
+
+
+<!-- Modal para agregar contrato -->
+<div class="modal fade" id="addModal" tabindex="-1" role="dialog" aria-labelledby="addModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addModalLabel">Agregar Nuevo Contrato</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="addContratoForm">
+                    {% csrf_token %}
+                    <input type="hidden" id="rut_propietario" name="rut_propietario">
+                    {{ form|crispy }}
+                    <button type="submit" class="btn btn-primary">Agregar</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script>
+    // Código para manejar los formularios y actualizar la tabla
+    $(document).on('click', '.add-contract-btn', function() {
+        var rutPropietario = $(this).data('rut_propietario');
+        $('#rut_propietario').val(rutPropietario);
+        $('#addContractModal').modal('show');
+    });
+    // Manejar el formulario de agregar contrato
+    $('#addContratoForm').on('submit', function(e) {
+        e.preventDefault();
+        $.ajax({
+            url: "{% url 'crear_nuevo_contrato' %}",
+            method: 'POST',
+            data: $(this).serialize(),
+            success: function(response) {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Contrato agregado',
+                    text: response.message,
+                    timer: 2000,
+                    showConfirmButton: false
+                }).then(function() {
+                    location.reload(); // Recargar la página para ver los cambios
+                });
+            },
+            error: function(response) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Error al agregar el contrato'
+                });
+            }
+        });
+    });
+
+    // CSRF token setup for AJAX
+function getCookie(name) {
+    var cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        var cookies = document.cookie.split(';');
+        for (var i = 0; i < cookies.length; i++) {
+            var cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+var csrftoken = getCookie('csrftoken');
+
+$.ajaxSetup({
+    beforeSend: function(xhr, settings) {
+        if (!(/^http:.*/.test(settings.url) || /^https:.*/.test(settings.url))) {
+            xhr.setRequestHeader("X-CSRFToken", csrftoken);
+        }
+    }
+});
+
+</script>
 
 {% endblock %}

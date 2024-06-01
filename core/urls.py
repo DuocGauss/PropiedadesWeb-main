@@ -25,6 +25,7 @@ urlpatterns = [
     path('op_arriendo/', views.op_arriendo, name='op_arriendo'),
     path('propietarios/', views.propietarios, name='propietarios'),
     path('crear_contrato/', views.crear_contrato, name='crear_contrato'),
+    path('crear_nuevo_contrato/', views.crear_nuevo_contrato, name='crear_nuevo_contrato'),
     
 ]
 

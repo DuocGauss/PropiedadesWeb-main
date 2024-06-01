@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from .forms import frmRegistro, frmLogin, frmCliente, frmClienteEdit, frmTipoCliente, frmCrearPropiedad, frmActualizarPropiedad, frmContrato, frmPropietario
-from .models import Cliente, Propiedad, Contrato
+from .models import Cliente, Propiedad, Contrato, Propietario
 from django.contrib import messages
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login, authenticate, logout
@@ -240,34 +240,55 @@ def op_arriendo(request):
 
 @login_required
 def propietarios(request):
+    form = frmContrato()
     contratos = Contrato.objects.filter(rut_empresa=request.user).order_by('-fecha_firma')
+    propietarios = Propietario.objects.filter(contrato__rut_empresa=request.user).distinct()
     contexto = {}
     default_page = 1
     page = request.GET.get('page', default_page)
     query = request.GET.get('q')
 
     if query:
-        contratos = contratos.filter(
-            Q(rut_propietario__rut_propietario__icontains=query) |
-            Q(rut_propietario__nombre__icontains=query) |
-            Q(rut_propietario__telefono_1__icontains=query) |
-            Q(rut_propietario__telefono_2__icontains=query) |
-            Q(rut_propietario__correo__icontains=query)
+        propietarios = propietarios.filter(
+            Q(rut_propietario__icontains=query) |
+            Q(nombre__icontains=query) |
+            Q(telefono_1__icontains=query) |
+            Q(telefono_2__icontains=query) |
+            Q(correo__icontains=query)
         )
 
     items_per_page = 5
-    paginator = Paginator(contratos, items_per_page)
+    paginator = Paginator(propietarios, items_per_page)
 
     try:
-        contratos = paginator.page(page)
+        propietarios = paginator.page(page)
     except PageNotAnInteger:
-        contratos = paginator.page(default_page)
+        propietarios = paginator.page(default_page)
     except EmptyPage:
-        contratos = paginator.page(paginator.num_pages)
+        propietarios = paginator.page(paginator.num_pages)
     
     contexto["contratos"] = contratos
+    contexto["propietarios"] = propietarios
+    contexto["form"] = form
     
     return render(request, 'core/propietarios.html', contexto)
+
+def crear_nuevo_contrato(request):
+    if request.method == 'POST':
+        form = frmContrato(request.POST)
+        if form.is_valid():
+            contrato = form.save(commit=False)  # Crear el objeto Cliente sin guardarlo aún 
+            rut_empresa = request.user
+            contrato.rut_empresa = rut_empresa
+            
+            rut_propietario_rut = request.POST.get('rut_propietario')
+            rut_propietario = get_object_or_404(Propietario, rut_propietario=rut_propietario_rut)
+            contrato.rut_propietario = rut_propietario
+            
+            form.save()
+            return JsonResponse({'message': 'Contrato agregado correctamente'})
+    return JsonResponse({'error': 'Formulario no válido'})
+
 
 @login_required
 def crear_contrato(request):

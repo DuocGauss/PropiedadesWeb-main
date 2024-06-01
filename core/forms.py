@@ -74,3 +74,4 @@ class frmContrato(forms.ModelForm):
             'fecha_firma': forms.DateInput(attrs={'type': 'date'}),
             'fecha_termino': forms.DateInput(attrs={'type': 'date'})
         }
+        
