@@ -273,21 +273,32 @@ def propietarios(request):
     
     return render(request, 'core/propietarios.html', contexto)
 
+@login_required
 def crear_nuevo_contrato(request):
     if request.method == 'POST':
         form = frmContrato(request.POST)
         if form.is_valid():
-            contrato = form.save(commit=False)  # Crear el objeto Cliente sin guardarlo aún 
+            contrato = form.save(commit=False)
             rut_empresa = request.user
             contrato.rut_empresa = rut_empresa
-            
+
             rut_propietario_rut = request.POST.get('rut_propietario')
-            rut_propietario = get_object_or_404(Propietario, rut_propietario=rut_propietario_rut)
+            rut_propietario = Propietario.objects.filter(
+                rut_propietario=rut_propietario_rut,
+                contrato__rut_empresa=rut_empresa
+            ).distinct().first()
+
+            if not rut_propietario:
+                return JsonResponse({'error': 'Propietario no encontrado para esta empresa'})
+
             contrato.rut_propietario = rut_propietario
-            
-            form.save()
+            contrato.save()
+
             return JsonResponse({'message': 'Contrato agregado correctamente'})
-    return JsonResponse({'error': 'Formulario no válido'})
+        else:
+            return JsonResponse({'error': 'Formulario no válido'})
+
+    return JsonResponse({'error': 'Método no permitido'})
 
 
 @login_required
@@ -296,12 +307,23 @@ def crear_contrato(request):
         propietario_form = frmPropietario(request.POST)
         contrato_form = frmContrato(request.POST)
         if propietario_form.is_valid() and contrato_form.is_valid():
-            propietario = propietario_form.save()
+            rut_propietario = propietario_form.cleaned_data['rut_propietario']
+            rut_empresa = request.user
+
+            # Verificar si ya existe un propietario con el mismo rut_propietario para la empresa actual a través de contratos
+            propietario = Propietario.objects.filter(
+                rut_propietario=rut_propietario,
+                contrato__rut_empresa=rut_empresa
+            ).distinct().first()
+
+            if propietario is None:
+                propietario = propietario_form.save()
+
             contrato = contrato_form.save(commit=False)
             contrato.rut_propietario = propietario
-            contrato.rut_empresa = request.user  # Asignar la empresa corredora autenticada
+            contrato.rut_empresa = rut_empresa  # Asignar la empresa corredora autenticada
             contrato.save()
-            messages.success(request,"Propietario agregado")
+            messages.success(request, "Propietario agregado")
             return redirect('propietarios')
     else:
         propietario_form = frmPropietario()
@@ -310,3 +332,32 @@ def crear_contrato(request):
         'propietario_form': propietario_form,
         'contrato_form': contrato_form
     })
+
+    
+
+
+
+@login_required
+def eliminar_propietario(request, pk):
+    propietario = get_object_or_404(Propietario, pk=pk)
+    if request.method == 'POST':
+        propietario.delete()
+        return JsonResponse({'message': 'Propietario eliminado correctamente'})
+    return JsonResponse({'error': 'Método no permitido'}, status=405)
+
+
+@login_required
+def editar_propietario(request, pk):
+    propietario = get_object_or_404(Propietario, pk=pk)
+    if request.method == 'POST':
+        form = frmPropietario(request.POST, instance=propietario)
+        if form.is_valid():
+            nuevo_rut_propietario = form.cleaned_data['rut_propietario']
+            empresa = request.user
+            # Verificar si el nuevo RUT ya existe para la misma empresa, excluyendo el propietario actual
+            if Propietario.objects.filter(rut_propietario=nuevo_rut_propietario, contrato__rut_empresa=empresa).exclude(pk=pk).exists():
+                return JsonResponse({'error': 'El propietario ya existe en esta empresa'}, status=400)
+            else:
+                form.save()
+                return JsonResponse({'message': 'Propietario actualizado correctamente'})
+    return JsonResponse({'error': 'Formulario no válido'}, status=400)

@@ -94,7 +94,7 @@ class Comprador(models.Model):
         return f"{self.rut_comprador} - {self.nombre}"
     
 class Propietario(models.Model):
-    rut_propietario = models.CharField(max_length=10, primary_key=True)
+    rut_propietario = models.CharField(max_length=12)
     nombre = models.CharField(max_length=150)
     telefono_1 = models.CharField(max_length=12)
     telefono_2 = models.CharField(max_length=12)

@@ -97,10 +97,10 @@
                 <button class="btn btn-sm btn-success mr-2 add-contract-btn" data-rut_propietario="{{ propietario.rut_propietario }}" data-toggle="modal" data-target="#addModal ">
                     <i class="fas fa-solid fa-file-contract"></i>
                 </button>
-                <button class="btn btn-sm btn-primary edit-btn mr-2">
+                <button class="btn btn-sm btn-primary edit-btn mr-2" data-id="{{ propietario.id}}" data-rut_propietario="{{propietario.rut_propietario}}" data-nombre="{{ propietario.nombre }}" data-telefono_1="{{ propietario.telefono_1 }}" data-telefono_2="{{ propietario.telefono_2 }}" data-correo="{{ propietario.correo }}">
                     <i class="fas fa-edit"></i>
                 </button>
-                <button class="btn btn-sm btn-danger delete-btn">
+                <button class="btn btn-sm btn-danger delete-btn" data-id="{{ propietario.id }}">
                     <i class="fas fa-trash-alt"></i>
                 </button>
             </td>
@@ -177,6 +177,48 @@
 </div>
 
 
+<!-- Modal para editar propietario -->
+<div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="editModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editModalLabel">Editar Propietario</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="editPropForm">
+                    {% csrf_token %}
+                    <input type="hidden" id="editId" name="id">
+                    <div class="form-group">
+                        <label for="editRut">Rut</label>
+                        <input type="text" class="form-control" id="editRut" name="rut_propietario" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="editNombre">Nombre</label>
+                        <input type="text" class="form-control" id="editNombre" name="nombre" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="editTelefono1">Teléfono 1</label>
+                        <input type="text" class="form-control" id="editTelefono1" name="telefono_1"></input>
+                    </div>
+                    <div class="form-group">
+                        <label for="editTelefono2">Teléfono 2</label>
+                        <input type="text" class="form-control" id="editTelefono2" name="telefono_2" required></input>
+                    </div>
+                    <div class="form-group">
+                        <label for="editCorreo">Correo</label>
+                        <input type="email" class="form-control" id="editCorreo" name="correo" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Actualizar</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
 <script>
     // Código para manejar los formularios y actualizar la tabla
     $(document).on('click', '.add-contract-btn', function() {
@@ -211,6 +253,118 @@
             }
         });
     });
+
+    // Manejar el botón de eliminar propietario
+$(document).on('click', '.delete-btn', function() {
+    var id = $(this).data('id');
+
+    // Mostrar alerta de confirmación
+    Swal.fire({
+        title: '¿Estás seguro?',
+        text: "¡No podrás revertir esto!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Sí, eliminarlo!',
+        cancelButtonText: 'Cancelar'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            // Si el usuario confirma, enviar solicitud AJAX para eliminar
+            $.ajax({
+                url: "eliminar_propietario/" + id + "/",
+                method: 'POST',
+                headers: { 'X-CSRFToken': csrftoken },
+                success: function(response) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Propietario eliminado',
+                        text: response.message,
+                        timer: 2000,
+                        showConfirmButton: false
+                    }).then(function() {
+                        location.reload(); // Recargar la página para ver los cambios
+                    });
+                },
+                error: function(response) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'Error al eliminar el propietario'
+                    });
+                }
+            });
+        }
+    });
+});
+
+
+// Manejar el formulario de editar propietario
+$('#editPropForm').on('submit', function(e) {
+    e.preventDefault();
+    var id = $('#editId').val();
+
+    // Mostrar alerta de confirmación
+    Swal.fire({
+        title: '¿Estás seguro?',
+        text: "Seguro que desea modificar este propietario?",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Sí, modificar',
+        cancelButtonText: 'Cancelar'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            // Si el usuario confirma, enviar el formulario
+            $.ajax({
+                url: "editar_propietario/" + id + "/",
+                method: 'POST',
+                data: $('#editPropForm').serialize(), // Asegúrate de serializar el formulario correctamente
+                success: function(response) {
+                    $('#editModal').modal('hide');
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Propietario actualizado',
+                        text: response.message,
+                        timer: 2000,
+                        showConfirmButton: false
+                    }).then(function() {
+                        location.reload(); // Recargar la página para ver los cambios
+                    });
+                },
+                error: function(response) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'Error al actualizar el propietario'
+                    });
+                }
+            });
+        }
+    });
+});
+
+
+// Mostrar modal de edición con datos del cliente seleccionado
+$(document).on('click', '.edit-btn', function() {
+    var id = $(this).data('id');
+    var rut_propietario = $(this).data('rut_propietario');
+    var nombre = $(this).data('nombre');
+    var telefono_1 = $(this).data('telefono_1');
+    var telefono_2 = $(this).data('telefono_2');
+    var correo = $(this).data('correo');
+
+    $('#editId').val(id);
+    $('#editRut').val(rut_propietario);
+    $('#editNombre').val(nombre);
+    $('#editTelefono1').val(telefono_1);
+    $('#editTelefono2').val(telefono_2);
+    $('#editCorreo').val(correo);
+
+    $('#editModal').modal('show');
+});
+
 
     // CSRF token setup for AJAX
 function getCookie(name) {

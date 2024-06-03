@@ -65,6 +65,9 @@ class frmPropietario(forms.ModelForm):
     class Meta:
         model = Propietario
         fields = ['rut_propietario','nombre', 'telefono_1','telefono_2', 'correo']
+        
+
+
 
 class frmContrato(forms.ModelForm):
     class Meta:
