@@ -23,11 +23,10 @@
     <div class="row">
         <div class="col-lg-12 d-flex justify-content-between align-items-center mb-2">
             <div class="flex-grow-1 d-flex justify-content-center">
-
-            <form method="get" action="{% url 'propietarios' %}" class="form-inline my-2 my-lg-0">
-                <input class="form-control mr-sm-2" name="q" type="search" placeholder="Buscar Propietarios" aria-label="Search">
-                <button class="btn btn-outline-warning my-2 my-sm-0" type="submit">Buscar</button>
-            </form>
+                <p >
+                    Maneja la información de tus propietarios!
+                </p>
+            
         </div>
         
     </div>
@@ -50,7 +49,7 @@
         </a>
         {% endif %}
         
-{% if contratos %} 
+    {% if propietarios %} 
 
 <div class="container mt-5">
     
@@ -62,60 +61,70 @@
             </div>
         </div>
 
-<table class="table table-bordered">
-    <thead>
-        <tr>
-            <th scope="col">Rut Propietario</th>
-            <th scope="col">Nombre</th>
-            <th scope="col">Teléfono 1</th>
-            <th scope="col">Teléfono 2</th>
-            <th scope="col">Correo</th>
-            <th scope="col">Historial de Contratos</th>
-            <th scope="col">Acciones</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for propietario in propietarios %}
-        <tr>
-            <td>{{ propietario.rut_propietario }}</td>
-            <td>{{ propietario.nombre }}</td>
-            <td>{{ propietario.telefono_1 }}</td>
-            <td>{{ propietario.telefono_2 }}</td>
-            <td>{{ propietario.correo }}</td>
-            <td>
-                <ul>
-                    {% for historial_contrato in propietario.contrato_set.all %}
-                    <li>
-                        Contrato ID: {{ historial_contrato.id_contrato }}, 
-                        Fecha Inicio: {{ historial_contrato.fecha_firma }}, 
-                        Fecha Fin: {{ historial_contrato.fecha_termino }},
-                    </li>
-                    {% endfor %}
-                </ul>
-            </td>
-            <td class="d-flex justify-content-between">
-                <button class="btn btn-sm btn-success mr-2 add-contract-btn" data-rut_propietario="{{ propietario.rut_propietario }}" data-toggle="modal" data-target="#addModal ">
-                    <i class="fas fa-solid fa-file-contract"></i>
-                </button>
-                <button class="btn btn-sm btn-primary edit-btn mr-2" data-id="{{ propietario.id}}" data-rut_propietario="{{propietario.rut_propietario}}" data-nombre="{{ propietario.nombre }}" data-telefono_1="{{ propietario.telefono_1 }}" data-telefono_2="{{ propietario.telefono_2 }}" data-correo="{{ propietario.correo }}">
-                    <i class="fas fa-edit"></i>
-                </button>
-                <button class="btn btn-sm btn-danger delete-btn" data-id="{{ propietario.id }}">
-                    <i class="fas fa-trash-alt"></i>
-                </button>
-            </td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
-</div>
-</div>
-{% else %}
-    <div class="text-center mt-5">
-        <h3>Ningún propietario encontrado</h3>
-        <i class="fas fa-house-user icon fa-5x"></i>
+        <div class="flex relative">
+            <form method="get" action="{% url 'propietarios' %}" class="form-inline my-2 my-lg-0 w-100"> <!-- Añadir clase w-100 para tomar todo el ancho -->
+                <div class="input-group w-100"> <!-- Envolver el input en un grupo de entrada -->
+                    <input class="form-control me-2" name="q" type="search" placeholder="Buscar Propietarios" aria-label="Search"> <!-- Eliminar clase w-100 -->
+                    <button class="btn btn-outline-warning" type="submit"><i class="fas fa-search"></i></button> <!-- Agregar icono de búsqueda -->
+                </div>
+            </form>                            
+        </div>
+        
+
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th scope="col">Rut Propietario</th>
+                <th scope="col">Nombre</th>
+                <th scope="col">Teléfono 1</th>
+                <th scope="col">Teléfono 2</th>
+                <th scope="col">Correo</th>
+                <th scope="col">Historial de Contratos</th>
+                <th scope="col">Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for propietario in propietarios %}
+            <tr>
+                <td>{{ propietario.rut_propietario }}</td>
+                <td>{{ propietario.nombre }}</td>
+                <td>{{ propietario.telefono_1 }}</td>
+                <td>{{ propietario.telefono_2 }}</td>
+                <td>{{ propietario.correo }}</td>
+                <td>
+                    <ul>
+                        {% for historial_contrato in propietario.contrato_set.all %}
+                        <li>
+                            Contrato ID: {{ historial_contrato.id_contrato }}, 
+                            Fecha Inicio: {{ historial_contrato.fecha_firma }}, 
+                            Fecha Fin: {{ historial_contrato.fecha_termino }},
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </td>
+                <td class="d-flex justify-content-between">
+                    <button class="btn btn-sm btn-success mr-2 add-contract-btn" data-rut_propietario="{{ propietario.rut_propietario }}" data-toggle="modal" data-target="#addModal ">
+                        <i class="fas fa-solid fa-file-contract"></i>
+                    </button>
+                    <button class="btn btn-sm btn-primary edit-btn mr-2" data-id="{{ propietario.id}}" data-rut_propietario="{{propietario.rut_propietario}}" data-nombre="{{ propietario.nombre }}" data-telefono_1="{{ propietario.telefono_1 }}" data-telefono_2="{{ propietario.telefono_2 }}" data-correo="{{ propietario.correo }}">
+                        <i class="fas fa-edit"></i>
+                    </button>
+                    <button class="btn btn-sm btn-danger delete-btn" data-id="{{ propietario.id }}">
+                        <i class="fas fa-trash-alt"></i>
+                    </button>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
     </div>
-{% endif %}
+</div>
+    {% else %}
+        <div class="text-center mt-5">
+            <h3>Ningún propietario encontrado</h3>
+            <i class="fas fa-house-user icon fa-5x"></i>
+        </div>
+    {% endif %}
 
 
 <!--Paginación-->
