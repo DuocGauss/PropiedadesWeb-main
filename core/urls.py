@@ -28,6 +28,12 @@ urlpatterns = [
     path('propietarios/eliminar_propietario/<int:pk>/', views.eliminar_propietario, name='eliminar_propietario'),
     path('crear_contrato/', views.crear_contrato, name='crear_contrato'),
     path('crear_nuevo_contrato/', views.crear_nuevo_contrato, name='crear_nuevo_contrato'),
+    path('agentes/', views.agentes, name='agentes'),
+    path('crear_agente/', views.crear_agente, name='crear_agente'),
+    path('agentes/editar_agente/<int:pk>/', views.editar_agente, name='editar_agente'),
+    path('agentes/eliminar_agente/<int:pk>/', views.eliminar_agente, name='eliminar_agente'),
+    path('detalles_publicacion/', views.detalles_publicacion, name='detalles_publicacion'),
+    path('planes/', views.planes, name='planes'),
     
 ]
 

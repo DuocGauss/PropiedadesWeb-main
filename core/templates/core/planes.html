@@ -1,0 +1,105 @@
+{% extends "core/base.html" %}
+{% load static %}
+{% block title %}Clientes{% endblock %}
+{% load crispy_forms_tags %}
+{% block content %}
+<style>
+    .card {
+        height: 100%; /* Ajusta la altura de todas las tarjetas */
+    }
+
+    .card:hover {
+        transform: scale(1.05);
+        transition: transform 0.2s;
+    }
+
+    .card-naranja {
+        border-color: #FFA500; /* Color de borde naranja */
+        color: #FFA500; /* Texto y borde naranja */
+    }
+
+    .btn-naranja {
+        background-color: #FFA500; /* Color naranja */
+        border-color: #FFA500; /* Color de borde naranja */
+        color: #fff; /* Texto blanco */
+    }
+
+    .btn-naranja:hover {
+        background-color: #FFD700; /* Color naranja claro al pasar el mouse */
+        border-color: #FFD700; /* Color de borde naranja claro al pasar el mouse */
+    }
+</style>
+
+<div class="container mt-5">
+    <div class="text-center mb-4">
+        <h1>Selecciona tu Plan</h1>
+        <p class="lead">Elige el plan que mejor se adapte a tus necesidades.</p>
+    </div>
+    <div class="row">
+        <!-- Plan Básico -->
+        <div class="col-md-4">
+            <div class="card mb-4 shadow-sm card-naranja">
+                <img src="{% static 'core/img/gestion-inmobiliariajpeg.jpeg' %}" class="card-img-top" alt="Imagen Plan Básico">
+                <div class="card-header text-center">
+                    <h4>Plan Básico</h4>
+                </div>
+                <div class="card-body d-flex flex-column text-center"> <!-- Añadido d-flex flex-column -->
+                    <h2 class="card-title">$<small>/mes</small></h2>
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item">Característica 1</li>
+                        <li class="list-group-item">Característica 2</li>
+                        <li class="list-group-item">Característica 3</li>
+                    </ul>
+                    <a href="#" class="btn btn-naranja btn-block mt-auto">Seleccionar</a> <!-- Añadido mt-auto -->
+                </div>
+            </div>
+        </div>
+        <!-- Plan Estándar -->
+        <div class="col-md-4">
+            <div class="card mb-4 shadow-sm card-naranja">
+                <img src="{% static 'core/img/gestion-inmobiliariajpeg.jpeg' %}" class="card-img-top" alt="Imagen Plan Estándar">
+                <div class="card-header text-center">
+                    <h4>Plan Estándar</h4>
+                </div>
+                <div class="card-body d-flex flex-column text-center"> <!-- Añadido d-flex flex-column -->
+                    <h2 class="card-title">$<small>/mes</small></h2>
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item">Característica 1</li>
+                        <li class="list-group-item">Característica 2</li>
+                        <li class="list-group-item">Característica 3</li>
+                        <li class="list-group-item">Característica 4</li>
+                    </ul>
+                    <a href="#" class="btn btn-naranja btn-block mt-auto">Seleccionar</a> <!-- Añadido mt-auto -->
+                </div>
+            </div>
+        </div>
+        <!-- Plan Premium -->
+        <div class="col-md-4">
+            <div class="card mb-4 shadow-sm card-naranja">
+                <img src="{% static 'core/img/gestion-inmobiliariajpeg.jpeg' %}" class="card-img-top" alt="Imagen Plan Premium">
+                <div class="card-header text-center">
+                    <h4>Plan Premium</h4>
+                </div>
+                <div class="card-body d-flex flex-column text-center"> <!-- Añadido d-flex flex-column -->
+                    <h2 class="card-title">$<small>/mes</small></h2>
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item">Característica 1</li>
+                        <li class="list-group-item">Característica 2</li>
+                        <li class="list-group-item">Característica 3</li>
+                        <li class="list-group-item">Característica 4</li>
+                        <li class="list-group-item">Característica 5</li>
+                    </ul>
+                    <a href="#" class="btn btn-naranja btn-block mt-auto">Seleccionar</a> <!-- Añadido mt-auto -->
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Términos y Condiciones -->
+    <div class="text-center mt-4">
+        <p class="small">
+            Al seleccionar un plan, aceptas nuestros <a href="#">Términos y Condiciones</a>.
+        </p>
+    </div>
+</div>
+
+{% endblock %}

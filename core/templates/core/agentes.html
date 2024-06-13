@@ -1,7 +1,9 @@
 {% extends "core/base.html" %}
 {% load static %}
-{% block title %}Propietarios{% endblock %}
+{% load humanize %}
+{% block title %}Gestión de Agentes{% endblock %}
 {% load crispy_forms_tags %}
+
 {% block content %}
 
 {% if messages %}
@@ -23,18 +25,17 @@
         <nav aria-label="breadcrumb" style="background-color: transparent;">
             <ol class="breadcrumb mb-2 mb-md-0" style="background-color: transparent;">
                 <li class="breadcrumb-item"><a href="#">Menú</a></li>
-                <li class="breadcrumb-item active" aria-current="page">Propietarios</li>
+                <li class="breadcrumb-item active" aria-current="page">Agentes</li>
             </ol>
         </nav>
     </div>
-    <h2 style="text-align:center;">Gestión de Propietarios</h2>
+    <h2 style="text-align:center;">Gestión de Agentes</h2>
     <div class="row">
         <div class="col-lg-12 d-flex justify-content-between align-items-center mb-2">
             <div class="flex-grow-1 d-flex justify-content-center">
                 <p >
-                    Maneja la información de tus propietarios!
+                    Maneja la información de tus agentes!
                 </p>
-            
         </div>
         
     </div>
@@ -42,9 +43,9 @@
 
 <div class="d-flex justify-content-between align-items-center mb-3 container-fluid col-lg-1 text-lg-end" style="margin-right: 10px;">
     <div>
-        <a class="btn btn-primary btn-sm me-2 btn-block" href="{% url "crear_contrato" %}">
+        <button class="btn btn-primary btn-sm me-2 btn-block" data-toggle="modal" data-target="#addModal " >
             Agregar <i class="fas fa-plus"></i>
-        </a>
+        </button>
     </div>
 </div>
 
@@ -52,13 +53,13 @@
     <div class="col-lg-12">
         {% if request.GET.q %}
         <!-- Botón Reset -->
-        <a class="btn btn-secondary btn-sm me-2" href="{% url 'propietarios' %}">
+        <a class="btn btn-secondary btn-sm me-2" href="{% url 'agentes' %}">
             Volver <i class="fas fa-undo"></i>
         </a>
         {% endif %}
-        
-    {% if propietarios %} 
+    {% if agentes %}
 
+    <!-- Tabla para mostrar agentes -->
 <div class="container mt-5">
     
     <div class="table-responsive">
@@ -68,56 +69,42 @@
                 <button class="btn btn-primary btn-sm me-2"id="printButton" class="btn btn-info">Imprimir<i class="fas fa-print"></i></button>
             </div>
         </div>
-
-        <div class="flex relative">
-            <form method="get" action="{% url 'propietarios' %}" class="form-inline my-2 my-lg-0 w-100"> <!-- Añadir clase w-100 para tomar todo el ancho -->
-                <div class="input-group w-100"> <!-- Envolver el input en un grupo de entrada -->
-                    <input class="form-control me-2" name="q" type="search" placeholder="Buscar Propietarios" aria-label="Search"> <!-- Eliminar clase w-100 -->
-                    <button class="btn btn-outline-warning" type="submit"><i class="fas fa-search"></i></button> <!-- Agregar icono de búsqueda -->
-                </div>
-            </form>                            
-        </div>
         
+        <div class="flex relative">
+            <form method="get" action="{% url 'agentes' %}" class="form-inline my-2 my-lg-0 w-100">
+                <div class="input-group w-100">
+                    <input class="form-control mr-sm-2" name="q" type="search" placeholder="Buscar Agentes" aria-label="Search">
+                    <button class="btn btn-outline-warning" type="submit"><i class="fas fa-search"></i></button>
+                </div>
+            </form>                           
+        </div>
 
     <table class="table table-bordered">
         <thead>
             <tr>
-                <th scope="col">Rut Propietario</th>
+                <th scope="col">Rut</th>
                 <th scope="col">Nombre</th>
-                <th scope="col">Teléfono 1</th>
-                <th scope="col">Teléfono 2</th>
+                <th scope="col">Dirección</th>
+                <th scope="col">Teléfono</th>
                 <th scope="col">Correo</th>
-                <th scope="col">Historial de Contratos</th>
+                <th scope="col">Fecha Creación</th>
                 <th scope="col">Acciones</th>
             </tr>
         </thead>
         <tbody>
-            {% for propietario in propietarios %}
+            {% for agente in agentes %}
             <tr>
-                <td>{{ propietario.rut_propietario }}</td>
-                <td>{{ propietario.nombre }}</td>
-                <td>{{ propietario.telefono_1 }}</td>
-                <td>{{ propietario.telefono_2 }}</td>
-                <td>{{ propietario.correo }}</td>
-                <td>
-                    <ul>
-                        {% for historial_contrato in propietario.contrato_set.all %}
-                        <li>
-                            Contrato ID: {{ historial_contrato.id_contrato }}, 
-                            Fecha Inicio: {{ historial_contrato.fecha_firma }}, 
-                            Fecha Fin: {{ historial_contrato.fecha_termino }},
-                        </li>
-                        {% endfor %}
-                    </ul>
-                </td>
+                <td>{{ agente.rut_agente }}</td>
+                <td>{{ agente.nombre }}</td>
+                <td>{{ agente.direccion }}</td>
+                <td>{{ agente.telefono }}</td>
+                <td>{{ agente.correo }}</td>
+                <td>{{ agente.fecha_creacion }}</td>
                 <td class="d-flex justify-content-between">
-                    <button class="btn btn-sm btn-success mr-2 add-contract-btn" data-rut_propietario="{{ propietario.rut_propietario }}" data-toggle="modal" data-target="#addModal ">
-                        <i class="fas fa-solid fa-file-contract"></i>
-                    </button>
-                    <button class="btn btn-sm btn-primary edit-btn mr-2" data-id="{{ propietario.id}}" data-rut_propietario="{{propietario.rut_propietario}}" data-nombre="{{ propietario.nombre }}" data-telefono_1="{{ propietario.telefono_1 }}" data-telefono_2="{{ propietario.telefono_2 }}" data-correo="{{ propietario.correo }}">
+                    <button class="btn btn-sm btn-primary edit-btn mr-2" data-id="{{ agente.id}}" data-rut_agente="{{agente.rut_agente}}" data-nombre="{{ agente.nombre }}" data-direccion="{{ agente.direccion }}" data-telefono="{{ agente.telefono }}" data-correo="{{ agente.correo }}">
                         <i class="fas fa-edit"></i>
                     </button>
-                    <button class="btn btn-sm btn-danger delete-btn" data-id="{{ propietario.id }}">
+                    <button class="btn btn-sm btn-danger delete-btn" data-id="{{ agente.id }}">
                         <i class="fas fa-trash-alt"></i>
                     </button>
                 </td>
@@ -126,26 +113,26 @@
         </tbody>
     </table>
     </div>
-</div>
+</div> 
     {% else %}
-        <div class="text-center mt-5">
-            <h3>Ningún propietario encontrado</h3>
-            <i class="fas fa-house-user icon fa-5x"></i>
-        </div>
+    <div class="text-center mt-5">
+        <h3>Ningún agente encontrado</h3>
+        <i class="fas fa-user-tie fa-5x"></i>
+    </div>
     {% endif %}
 
 
 <!--Paginación-->
 
-{% if propietarios.has_other_pages %}
+{% if agentes.has_other_pages %}
     <div class="btn-group" role="group" aria-label="Item pagination">
-        {% if propietarios.has_previous %}
+        {% if agentes.has_previous %}
             <a href="?page=1" class="btn btn-outline-primary">&laquo;&laquo;</a>
-            <a href="?page={{ propietarios.previous_page_number }}" class="btn btn-outline-primary">&laquo;</a>
+            <a href="?page={{ agentes.previous_page_number }}" class="btn btn-outline-primary">&laquo;</a>
         {% endif %}
 
-        {% for page_number in propietarios.paginator.page_range %}
-            {% if propietarios.number == page_number %}
+        {% for page_number in agentes.paginator.page_range %}
+            {% if agentes.number == page_number %}
                 <button class="btn btn-outline-primary">
                     <span>{{ page_number }} <span class="sr-only">(current)</span></span>
                 </button>
@@ -156,9 +143,9 @@
             {% endif %}
         {% endfor %}
 
-        {% if propietarios.has_next %}
-            <a href="?page={{ propietarios.next_page_number }}" class="btn btn-outline-primary">&raquo;</a>
-            <a href="?page={{ propietarios.paginator.num_pages }}" class="btn btn-outline-primary">&raquo;&raquo;</a>
+        {% if agentes.has_next %}
+            <a href="?page={{ agentes.next_page_number }}" class="btn btn-outline-primary">&raquo;</a>
+            <a href="?page={{ agentes.paginator.num_pages }}" class="btn btn-outline-primary">&raquo;&raquo;</a>
         {% endif %}
     </div>
 {% else %}
@@ -169,22 +156,19 @@
     </div>
 </div>
 
-
-
-<!-- Modal para agregar contrato -->
+<!-- Modal para agregar agente -->
 <div class="modal fade" id="addModal" tabindex="-1" role="dialog" aria-labelledby="addModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="addModalLabel">Agregar Nuevo Contrato</h5>
+                <h5 class="modal-title" id="addModalLabel">Agregar Agente</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
             <div class="modal-body">
-                <form id="addContratoForm">
+                <form id="addAgenteForm">
                     {% csrf_token %}
-                    <input type="hidden" id="rut_propietario" name="rut_propietario">
                     {{ form|crispy }}
                     <button type="submit" class="btn btn-primary">Agregar</button>
                 </form>
@@ -194,35 +178,35 @@
 </div>
 
 
-<!-- Modal para editar propietario -->
+<!-- Modal para editar agente -->
 <div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="editModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="editModalLabel">Editar Propietario</h5>
+                <h5 class="modal-title" id="editModalLabel">Editar Agente</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
             <div class="modal-body">
-                <form id="editPropForm">
+                <form id="editAgenteForm">
                     {% csrf_token %}
                     <input type="hidden" id="editId" name="id">
                     <div class="form-group">
                         <label for="editRut">Rut</label>
-                        <input type="text" class="form-control" id="editRut" name="rut_propietario" required>
+                        <input type="text" class="form-control" id="editRut" name="rut_agente" required>
                     </div>
                     <div class="form-group">
                         <label for="editNombre">Nombre</label>
                         <input type="text" class="form-control" id="editNombre" name="nombre" required>
                     </div>
                     <div class="form-group">
-                        <label for="editTelefono1">Teléfono 1</label>
-                        <input type="text" class="form-control" id="editTelefono1" name="telefono_1"></input>
+                        <label for="editDireccion">Dirección</label>
+                        <textarea class="form-control" id="editDireccion" name="direccion" rows="3"></textarea>
                     </div>
                     <div class="form-group">
-                        <label for="editTelefono2">Teléfono 2</label>
-                        <input type="text" class="form-control" id="editTelefono2" name="telefono_2" required></input>
+                        <label for="editTelefono">Teléfono</label>
+                        <input type="text" class="form-control" id="editTelefono" name="telefono" required></input>
                     </div>
                     <div class="form-group">
                         <label for="editCorreo">Correo</label>
@@ -236,24 +220,21 @@
 </div>
 
 
+
 <script>
     // Código para manejar los formularios y actualizar la tabla
-    $(document).on('click', '.add-contract-btn', function() {
-        var rutPropietario = $(this).data('rut_propietario');
-        $('#rut_propietario').val(rutPropietario);
-        $('#addContractModal').modal('show');
-    });
-    // Manejar el formulario de agregar contrato
-    $('#addContratoForm').on('submit', function(e) {
+    
+    // Manejar el formulario de agregar cliente
+    $('#addAgenteForm').on('submit', function(e) {
         e.preventDefault();
         $.ajax({
-            url: "{% url 'crear_nuevo_contrato' %}",
+            url: "{% url 'crear_agente' %}",
             method: 'POST',
             data: $(this).serialize(),
             success: function(response) {
                 Swal.fire({
                     icon: 'success',
-                    title: 'Contrato agregado',
+                    title: 'Agente agregado',
                     text: response.message,
                     timer: 2000,
                     showConfirmButton: false
@@ -265,13 +246,59 @@
                 Swal.fire({
                     icon: 'error',
                     title: 'Error',
-                    text: 'Error al agregar el contrato'
+                    text: 'Error al agregar al agente'
                 });
             }
         });
     });
 
-    // Manejar el botón de eliminar propietario
+    // Manejar el formulario de editar agente
+$('#editAgenteForm').on('submit', function(e) {
+    e.preventDefault();
+    var id = $('#editId').val();
+
+    // Mostrar alerta de confirmación
+    Swal.fire({
+        title: '¿Estás seguro?',
+        text: "Seguro que desea modificar este agente?",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Sí, modificar',
+        cancelButtonText: 'Cancelar'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            // Si el usuario confirma, enviar el formulario
+            $.ajax({
+                url: "editar_agente/" + id + "/",
+                method: 'POST',
+                data: $('#editAgenteForm').serialize(), // Asegúrate de serializar el formulario correctamente
+                success: function(response) {
+                    $('#editModal').modal('hide');
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Agente actualizado',
+                        text: response.message,
+                        timer: 2000,
+                        showConfirmButton: false
+                    }).then(function() {
+                        location.reload(); // Recargar la página para ver los cambios
+                    });
+                },
+                error: function(response) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'Error al actualizar al agente'
+                    });
+                }
+            });
+        }
+    });
+});
+
+// Manejar el botón de eliminar agente
 $(document).on('click', '.delete-btn', function() {
     var id = $(this).data('id');
 
@@ -289,13 +316,13 @@ $(document).on('click', '.delete-btn', function() {
         if (result.isConfirmed) {
             // Si el usuario confirma, enviar solicitud AJAX para eliminar
             $.ajax({
-                url: "eliminar_propietario/" + id + "/",
+                url: "eliminar_agente/" + id + "/",
                 method: 'POST',
                 headers: { 'X-CSRFToken': csrftoken },
                 success: function(response) {
                     Swal.fire({
                         icon: 'success',
-                        title: 'Propietario eliminado',
+                        title: 'Agente eliminado',
                         text: response.message,
                         timer: 2000,
                         showConfirmButton: false
@@ -307,54 +334,7 @@ $(document).on('click', '.delete-btn', function() {
                     Swal.fire({
                         icon: 'error',
                         title: 'Error',
-                        text: 'Error al eliminar el propietario'
-                    });
-                }
-            });
-        }
-    });
-});
-
-
-// Manejar el formulario de editar propietario
-$('#editPropForm').on('submit', function(e) {
-    e.preventDefault();
-    var id = $('#editId').val();
-
-    // Mostrar alerta de confirmación
-    Swal.fire({
-        title: '¿Estás seguro?',
-        text: "Seguro que desea modificar este propietario?",
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#3085d6',
-        cancelButtonColor: '#d33',
-        confirmButtonText: 'Sí, modificar',
-        cancelButtonText: 'Cancelar'
-    }).then((result) => {
-        if (result.isConfirmed) {
-            // Si el usuario confirma, enviar el formulario
-            $.ajax({
-                url: "editar_propietario/" + id + "/",
-                method: 'POST',
-                data: $('#editPropForm').serialize(), // Asegúrate de serializar el formulario correctamente
-                success: function(response) {
-                    $('#editModal').modal('hide');
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Propietario actualizado',
-                        text: response.message,
-                        timer: 2000,
-                        showConfirmButton: false
-                    }).then(function() {
-                        location.reload(); // Recargar la página para ver los cambios
-                    });
-                },
-                error: function(response) {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Error',
-                        text: 'Error al actualizar el propietario'
+                        text: 'Error al eliminar al agente'
                     });
                 }
             });
@@ -366,24 +346,24 @@ $('#editPropForm').on('submit', function(e) {
 // Mostrar modal de edición con datos del cliente seleccionado
 $(document).on('click', '.edit-btn', function() {
     var id = $(this).data('id');
-    var rut_propietario = $(this).data('rut_propietario');
+    var rut_agente = $(this).data('rut_agente');
     var nombre = $(this).data('nombre');
-    var telefono_1 = $(this).data('telefono_1');
-    var telefono_2 = $(this).data('telefono_2');
+    var direccion = $(this).data('direccion');
+    var telefono = $(this).data('telefono');
     var correo = $(this).data('correo');
 
     $('#editId').val(id);
-    $('#editRut').val(rut_propietario);
+    $('#editRut').val(rut_agente);
     $('#editNombre').val(nombre);
-    $('#editTelefono1').val(telefono_1);
-    $('#editTelefono2').val(telefono_2);
+    $('#editDireccion').val(direccion);
+    $('#editTelefono').val(telefono);
     $('#editCorreo').val(correo);
 
     $('#editModal').modal('show');
 });
 
 
-    // CSRF token setup for AJAX
+// CSRF token setup for AJAX
 function getCookie(name) {
     var cookieValue = null;
     if (document.cookie && document.cookie !== '') {
@@ -408,6 +388,8 @@ $.ajaxSetup({
     }
 });
 
+
 </script>
+
 
 {% endblock %}

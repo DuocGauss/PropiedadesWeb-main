@@ -3,16 +3,6 @@ from django.contrib.auth.models import AbstractUser
 #from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db.models.deletion import CASCADE
 
-# Ejemplo de establecer un límite mínimo y máximo para el campo integer
-#    mi_entero = models.IntegerField(
-#        validators=[
-#            MinValueValidator(0),  # Establece el límite mínimo, por ejemplo, 0
-#            MaxValueValidator(100) # Establece el límite máximo, por ejemplo, 100
-#        ]
-#    )
-
-# Create your models here.
-
 
 class EmpresaCorredora(AbstractUser):
     rut_empresa = models.CharField(max_length=50, primary_key=True)
@@ -25,7 +15,7 @@ class EmpresaCorredora(AbstractUser):
         return f"{self.rut_empresa} - {self.username}"
 
 class Agente(models.Model):
-    rut_agente = models.CharField(max_length=10, primary_key=True)
+    rut_agente = models.CharField(max_length=12)
     nombre = models.CharField(max_length=50)
     direccion = models.CharField(max_length=100)
     telefono = models.CharField(max_length=12)
@@ -199,6 +189,7 @@ class Propiedad(models.Model):
     precio_tasacion = models.IntegerField()
     direccion_propiedad = models.CharField(max_length=100)
     rut_empresa = models.ForeignKey(EmpresaCorredora, on_delete=CASCADE)
+    rut_agente = models.ForeignKey(Agente, on_delete=models.SET_NULL, null=True, blank=True)
     
 
     def estado_display(self):

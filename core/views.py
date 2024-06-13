@@ -1,6 +1,6 @@
 from django.shortcuts import render
-from .forms import frmRegistro, frmLogin, frmCliente, frmClienteEdit, frmTipoCliente, frmCrearPropiedad, frmActualizarPropiedad, frmContrato, frmPropietario
-from .models import Cliente, Propiedad, Contrato, Propietario
+from .forms import frmRegistro, frmLogin, frmCliente, frmClienteEdit, frmTipoCliente, frmCrearPropiedad, frmActualizarPropiedad, frmContrato, frmPropietario, frmAgente, frmAgenteEdit
+from .models import Cliente, Propiedad, Contrato, Propietario, Agente
 from django.contrib import messages
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login, authenticate, logout
@@ -161,8 +161,9 @@ def add_tipo_cliente(request):
 def listar_propiedades(request):
     rut_empresa = request.user
     propiedades = Propiedad.objects.filter(rut_empresa=rut_empresa).order_by('-id')
+    agentes = Agente.objects.filter(rut_empresa=rut_empresa)
     contexto = {}
-    form = frmCrearPropiedad()
+    form = frmCrearPropiedad(user=request.user)
 
     default_page = 1
     page = request.GET.get('page', default_page)
@@ -189,6 +190,7 @@ def listar_propiedades(request):
 
     contexto["propiedades"] = propiedades
     contexto["form"] = form
+    contexto["agentes"] = agentes
     return render(request, 'core/propiedades.html', contexto)
 
 
@@ -361,3 +363,86 @@ def editar_propietario(request, pk):
                 form.save()
                 return JsonResponse({'message': 'Propietario actualizado correctamente'})
     return JsonResponse({'error': 'Formulario no válido'}, status=400)
+
+
+@login_required
+def agentes(request):
+    form = frmAgente()
+    empresa = request.user
+    agentes = Agente.objects.filter(rut_empresa=empresa).order_by('-fecha_creacion')
+    contexto = {}
+    
+    default_page = 1
+    page = request.GET.get('page', default_page)
+    query = request.GET.get('q')
+    
+    if query:
+        # Filtrar mantenciones en función de la búsqueda
+        agentes = agentes.filter(
+            Q(rut_agente__icontains=query) |
+            Q(nombre__icontains=query) |
+            Q(direccion__icontains=query) |
+            Q(telefono__icontains=query) |
+            Q(correo__icontains=query)  
+        )
+
+    items_per_page = 5  # Ajusta el número de elementos por página según tus necesidades
+    paginator = Paginator(agentes, items_per_page)
+
+    try:
+        agentes = paginator.page(page)
+    except PageNotAnInteger:
+        agentes = paginator.page(default_page)
+    except EmptyPage:
+        agentes = paginator.page(paginator.num_pages)
+        
+    contexto["form"] = form
+    contexto["agentes"] = agentes
+    return render(request, 'core/agentes.html', contexto)
+
+
+def crear_agente(request):
+    if request.method == 'POST':
+        form = frmAgente(request.POST)
+        if form.is_valid():
+            rut_agente = form.cleaned_data['rut_agente']
+            agente = form.save(commit=False)  # Crear el objeto Cliente sin guardarlo aún 
+            empresa = request.user
+            if Agente.objects.filter(rut_agente=rut_agente, rut_empresa=empresa).exists():
+                return JsonResponse({'error': 'El agente ya existe en esta empresa'}, status=400)
+            else:
+                agente.rut_empresa = empresa
+                form.save()
+            return JsonResponse({'message': 'Agente agregado correctamente'})
+    return JsonResponse({'error': 'Formulario no válido'})
+
+
+def editar_agente(request, pk):
+    agente = get_object_or_404(Agente, pk=pk)
+    if request.method == 'POST':
+        form = frmAgenteEdit(request.POST, instance=agente)
+        if form.is_valid():
+            rut_agente = form.cleaned_data['rut_agente']
+            empresa = request.user
+            if Agente.objects.filter(rut_agente=rut_agente, rut_empresa=empresa).exclude(pk=pk).exists():
+                return JsonResponse({'error': 'El agente ya existe en esta empresa'}, status=400)
+            else:
+                form.save()
+                return JsonResponse({'message': 'Agente actualizado correctamente'})
+    return JsonResponse({'error': 'Formulario no válido'})
+
+
+def eliminar_agente(request, pk):
+    agente = get_object_or_404(Agente, pk=pk)
+    if request.method == "POST":
+        agente.delete()
+        return JsonResponse({'message': 'Agente eliminado correctamente'})
+    return JsonResponse({'error': 'Método no permitido'}, status=405)
+
+
+def detalles_publicacion(request):
+    return render(request, 'core/detalles_publicacion.html')
+
+
+def planes(request):
+    return render(request, 'core/planes.html')

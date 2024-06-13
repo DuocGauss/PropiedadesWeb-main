@@ -21,7 +21,16 @@
 {% endif %}
 
 <div class="container-fluid mb-3">
+    <div class="col-12 d-flex flex-column flex-md-row justify-content-between align-items-center">
+        <nav aria-label="breadcrumb" style="background-color: transparent;">
+            <ol class="breadcrumb mb-2 mb-md-0" style="background-color: transparent;">
+                <li class="breadcrumb-item"><a href="#">Menú</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Propiedades</li>
+            </ol>
+        </nav>
+    </div>
     <h2 style="text-align:center;">Gestión de Propiedades</h2>
+    
     <div class="row">
         <div class="col-lg-12 d-flex justify-content-between align-items-center mb-2">
             <div class="flex-grow-1 d-flex justify-content-center">
@@ -85,6 +94,7 @@
                 <th scope="col">Nro.Habitaciones</th>
                 <th scope="col">Baños</th>
                 <th scope="col">Dirección</th>
+                <th scope="col">Agente</th>
                 <th scope="col">Acciones</th>
             </tr>
         </thead>
@@ -101,8 +111,9 @@
                 <td>{{ propiedad.nro_habitaciones}}</td>
                 <td>{{ propiedad.nro_bannos}}</td>
                 <td>{{ propiedad.direccion_propiedad}}</td>
+                <td>{{ propiedad.rut_agente}}</td>
                 <td class="d-flex justify-content-between">
-                    <button class="btn btn-sm btn-primary edit-btn mr-2" data-id="{{ propiedad.id}}" data-numero_rol="{{propiedad.numero_rol}}"  data-tipo_propiedad="{{ propiedad.tipo_propiedad }}" data-tipo_operacion="{{ propiedad.tipo_operacion }}" data-estado="{{propiedad.estado}}" data-precio_tasacion="{{ propiedad.precio_tasacion }}" data-descripcion_propiedad="{{ propiedad.descripcion_propiedad}}" data-metros_cuadrados="{{ propiedad.metros_cuadrados }}" data-nro_habitaciones="{{propiedad.nro_habitaciones }}" data-nro_bannos="{{propiedad.nro_bannos }}" data-direccion_propiedad="{{ propiedad.direccion_propiedad }}"  >
+                    <button class="btn btn-sm btn-primary edit-btn mr-2" data-id="{{ propiedad.id}}" data-numero_rol="{{propiedad.numero_rol}}"  data-tipo_propiedad="{{ propiedad.tipo_propiedad }}" data-tipo_operacion="{{ propiedad.tipo_operacion }}" data-estado="{{propiedad.estado}}" data-precio_tasacion="{{ propiedad.precio_tasacion }}" data-descripcion_propiedad="{{ propiedad.descripcion_propiedad}}" data-metros_cuadrados="{{ propiedad.metros_cuadrados }}" data-nro_habitaciones="{{propiedad.nro_habitaciones }}" data-nro_bannos="{{propiedad.nro_bannos }}" data-direccion_propiedad="{{ propiedad.direccion_propiedad }}" data-rut_agente="{{ propiedad.rut_agente}}"  >
                         <i class="fas fa-edit"  ></i>  
                     </button>
                     <button class="btn btn-sm btn-danger delete-btn" data-id="{{ propiedad.id }}">
@@ -242,6 +253,14 @@
                     <div class="form-group">
                         <label for="editdirreccion">Dirección</label>
                         <input type="text" class="form-control" id="editdirreccion" name="direccion_propiedad" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="editrut_agente">Agente</label>
+                        <select class="form-control" id="editrut_agente" name="rut_agente">
+                            {% for agente in agentes %}
+                                <option value="{{ agente.id }}">{{ agente.nombre }} - {{agente.rut_agente}}</option>
+                            {% endfor %}
+                        </select>
                     </div>
 
                     <button type="submit" class="btn btn-primary">Actualizar</button>
@@ -400,6 +419,7 @@ $(document).on('click', '.edit-btn', function() {
     var nro_bannos = $(this).data('nro_bannos');
     var precio_tasacion = $(this).data('precio_tasacion');
     var direccion_propiedad = $(this).data('direccion_propiedad');
+    var rut_agente = $(this).data('rut_agente');
 
 
     $('#editId').val(id);
@@ -413,6 +433,7 @@ $(document).on('click', '.edit-btn', function() {
     $('#editbanno').val(nro_bannos);
     $('#edittasasion').val(precio_tasacion);
     $('#editdirreccion').val(direccion_propiedad);
+    $('#editrut_agente').val(rut_agente);
    
 
     $('#editModal').modal('show');
