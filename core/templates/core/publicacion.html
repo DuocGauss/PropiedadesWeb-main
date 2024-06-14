@@ -236,7 +236,7 @@
 $('#addPublicacionForm').on('submit', function(e) {
     e.preventDefault();
     $.ajax({
-        url: "{% url 'crear' %}", // ingresar url donde estara la funcion de crear publicacion
+        url: "#", // ingresar url donde estara la funcion de crear publicacion
         method: 'POST',
         data: $(this).serialize(),
         success: function(response) {

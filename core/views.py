@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from .forms import frmRegistro, frmLogin, frmCliente, frmClienteEdit, frmTipoCliente, frmCrearPropiedad, frmActualizarPropiedad, frmContrato, frmPropietario, frmAgente, frmAgenteEdit
+from .forms import frmRegistro, frmLogin, frmCliente, frmClienteEdit, frmTipoCliente, frmCrearPropiedad, frmActualizarPropiedad, frmContrato, frmPropietario, frmAgente, frmAgenteEdit, frmUbicacion
 from .models import Cliente, Propiedad, Contrato, Propietario, Agente
 from django.contrib import messages
 from django.shortcuts import render, redirect, get_object_or_404
@@ -7,7 +7,7 @@ from django.contrib.auth import login, authenticate, logout
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.db.models import Q
 from django.contrib.auth.decorators import login_required
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponseForbidden
 from django.views import View
 
 # Create your views here.
@@ -161,9 +161,8 @@ def add_tipo_cliente(request):
 def listar_propiedades(request):
     rut_empresa = request.user
     propiedades = Propiedad.objects.filter(rut_empresa=rut_empresa).order_by('-id')
-    agentes = Agente.objects.filter(rut_empresa=rut_empresa)
     contexto = {}
-    form = frmCrearPropiedad(user=request.user)
+    form = frmCrearPropiedad()
 
     default_page = 1
     page = request.GET.get('page', default_page)
@@ -174,7 +173,11 @@ def listar_propiedades(request):
             Q(numero_rol__icontains=query) |
             Q(tipo_propiedad__icontains=query) |
             Q(tipo_operacion__icontains=query) |
-            Q(metros_cuadrados__icontains=query) |
+            Q(ubicacion__comuna__icontains=query) |
+            Q(ubicacion__region__icontains=query) |
+            Q(ubicacion__calle__icontains=query) |
+            Q(ubicacion__num_calle__icontains=query) |
+            Q(ubicacion__num_propiedad__icontains=query) |
             Q(precio_tasacion__icontains=query)
         )
 
@@ -190,33 +193,64 @@ def listar_propiedades(request):
 
     contexto["propiedades"] = propiedades
     contexto["form"] = form
-    contexto["agentes"] = agentes
     return render(request, 'core/propiedades.html', contexto)
 
 
+@login_required
 def crear_propiedad(request):
     if request.method == 'POST':
-        form = frmCrearPropiedad(request.POST, request.FILES)
-        if form.is_valid():
-            propiedad = form.save(commit=False)
+        propiedad_form = frmCrearPropiedad(request.POST, request.FILES)
+        ubicacion_form = frmUbicacion(request.POST)
+        if propiedad_form.is_valid() and ubicacion_form.is_valid():
+            ubicacion = ubicacion_form.save()
+            propiedad = propiedad_form.save(commit=False)
+            propiedad.ubicacion = ubicacion
             propiedad.rut_empresa = request.user
-            form.save()
-            return JsonResponse({'message': 'Propiedad agregada correctamente'})
+            propiedad.save()
+            messages.success(request, "Propiedad agregada correctamente")
+            return redirect('listar')
     else:
-        form = frmCrearPropiedad()
-    return render(request, 'core/propiedades.html', {'form': form})
+        propiedad_form = frmCrearPropiedad()
+        ubicacion_form = frmUbicacion()
+        
+        # Filtrar agentes asociados al usuario autenticado
+        propiedad_form.fields['rut_agente'].queryset = Agente.objects.filter(rut_empresa=request.user)
+    
+    return render(request, 'core/crear_propiedad.html', {
+        'propiedad_form': propiedad_form,
+        'ubicacion_form': ubicacion_form
+    })
 
 
-def actualizar_propiedad(request, pk):
+@login_required
+def editar_propiedad(request, pk):
     propiedad = get_object_or_404(Propiedad, pk=pk)
+    ubicacion = propiedad.ubicacion
+    
+    # Verificar si la propiedad pertenece a la empresa del usuario autenticado
+    if propiedad.rut_empresa != request.user:
+        return HttpResponseForbidden("No tienes permiso para acceder a esta página")
+
     if request.method == 'POST':
-        form = frmActualizarPropiedad(request.POST, request.FILES, instance=propiedad)
-        if form.is_valid():
-            estado = request.POST.get('estado') == 'true'
-            propiedad.estado = estado
-            form.save()
-            return JsonResponse({'message': 'Propiedad actualizada correctamente'})
-    return JsonResponse({'error': 'Formulario no válido'})
+        propiedad_form = frmCrearPropiedad(request.POST, request.FILES, instance=propiedad)
+        ubicacion_form = frmUbicacion(request.POST, instance=ubicacion)
+        
+        if propiedad_form.is_valid() and ubicacion_form.is_valid():
+            ubicacion_form.save()
+            propiedad_form.save()
+            messages.success(request, "Propiedad actualizada correctamente")
+            return redirect('listar')
+    else:
+        propiedad_form = frmCrearPropiedad(instance=propiedad)
+        ubicacion_form = frmUbicacion(instance=ubicacion)
+        
+        # Filtrar agentes asociados al usuario autenticado
+        propiedad_form.fields['rut_agente'].queryset = Agente.objects.filter(rut_empresa=request.user)
+    
+    return render(request, 'core/editar_propiedad.html', {
+        'propiedad_form': propiedad_form,
+        'ubicacion_form': ubicacion_form
+    })
     
 
 @login_required

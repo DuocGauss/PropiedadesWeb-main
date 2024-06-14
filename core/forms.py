@@ -1,5 +1,5 @@
 from django import forms
-from .models import EmpresaCorredora, Cliente, Tipo_Cliente, Propiedad, Propietario, Contrato, Agente
+from .models import EmpresaCorredora, Cliente, Tipo_Cliente, Propiedad, Propietario, Contrato, Agente, Ubicacion
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm, UserChangeForm
 
 
@@ -45,15 +45,15 @@ class frmCrearPropiedad(forms.ModelForm):
         model = Propiedad
         fields = [
             'numero_rol','tipo_propiedad', 'tipo_operacion', 'titulo', 'estado', 'precio_tasacion',
-            'descripcion_propiedad', 'metros_cuadrados', 'nro_habitaciones', 'nro_bannos',
-            'direccion_propiedad','rut_agente',
+            'descripcion_propiedad', 'metros_cuadrados', 'nro_habitaciones', 'nro_bannos','rut_agente'
         ]
     titulo = forms.FileField(required=False)
-    def __init__(self, *args, **kwargs):
-        user = kwargs.pop('user', None)  # Extrae el usuario de los argumentos
-        super().__init__(*args, **kwargs)
-        if user:
-            self.fields['rut_agente'].queryset = Agente.objects.filter(rut_empresa=user)
+
+
+class frmUbicacion(forms.ModelForm):
+    class Meta:
+        model = Ubicacion
+        fields = ['calle', 'num_calle', 'num_propiedad', 'comuna', 'region', 'google_maps_link']
     
 
 class frmActualizarPropiedad(forms.ModelForm):
@@ -61,14 +61,9 @@ class frmActualizarPropiedad(forms.ModelForm):
         model = Propiedad
         fields = [
            'numero_rol','tipo_propiedad', 'tipo_operacion', 'estado', 'precio_tasacion', 
-           'descripcion_propiedad', 'metros_cuadrados', 'nro_habitaciones', 'nro_bannos',
-           'direccion_propiedad','rut_agente',
+           'descripcion_propiedad', 'metros_cuadrados', 'nro_habitaciones', 'nro_bannos','rut_agente',
         ]
-    def __init__(self, *args, **kwargs):
-        user = kwargs.pop('user', None)
-        super().__init__(*args, **kwargs)
-        if user:
-            self.fields['rut_agente'].queryset = Agente.objects.filter(rut_empresa=user)
+
         
         
 class frmPropietario(forms.ModelForm):

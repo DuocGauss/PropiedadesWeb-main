@@ -175,6 +175,18 @@ class Cierre_Operacion(models.Model):
 
     def __str__(self):
         return f"{self.id_cierre}"
+ 
+class Ubicacion(models.Model):
+    calle = models.CharField(max_length=100)
+    num_calle = models.CharField(max_length=50)
+    num_propiedad = models.CharField(max_length=50)
+    comuna = models.CharField(max_length=50)
+    region = models.CharField(max_length=50)
+    google_maps_link = models.URLField(max_length=200, null=True, blank=True)
+
+    def __str__(self):
+        return f"{self.calle}, {self.comuna}, {self.region}"
+
     
 class Propiedad(models.Model):
     numero_rol = models.IntegerField()
@@ -187,7 +199,7 @@ class Propiedad(models.Model):
     nro_habitaciones = models.IntegerField()
     nro_bannos = models.IntegerField()
     precio_tasacion = models.IntegerField()
-    direccion_propiedad = models.CharField(max_length=100)
+    ubicacion = models.OneToOneField(Ubicacion, on_delete=models.CASCADE)
     rut_empresa = models.ForeignKey(EmpresaCorredora, on_delete=CASCADE)
     rut_agente = models.ForeignKey(Agente, on_delete=models.SET_NULL, null=True, blank=True)
     

@@ -44,9 +44,9 @@
 
 <div class="d-flex justify-content-between align-items-center mb-3 container-fluid col-lg-1 text-lg-end" style="margin-right: 10px;">
     <div>
-        <button class="btn btn-primary btn-sm me-2 btn-block" data-toggle="modal" data-target="#addModal " >
+        <a class="btn btn-primary btn-sm me-2 btn-block" href="{% url "crear_propiedad" %}" >
             Agregar <i class="fas fa-plus"></i>
-        </button>
+        </a>
     </div>
 </div>
 
@@ -84,17 +84,14 @@
     <table class="table table-bordered">
         <thead>
             <tr>
-                <th scope="col">Numero rol</th>
+                <th scope="col">Num rol</th>
                 <th scope="col">Tipo</th>
-                <th scope="col">Operacion</th>
-                <th scope="col">Estado</th>
-                <th scope="col">Valor Tasasion</th>
-                <th scope="col">Metros Cuadrados</th>
-                <th scope="col">Descripción</th>
-                <th scope="col">Nro.Habitaciones</th>
-                <th scope="col">Baños</th>
-                <th scope="col">Dirección</th>
+                <th scope="col">Región</th>
+                <th scope="col">Comuna</th>
+                <th scope="col">Num Calle</th>
+                <th scope="col">Num Propiedad</th>
                 <th scope="col">Agente</th>
+                <th scope="col">Nueva</th>
                 <th scope="col">Acciones</th>
             </tr>
         </thead>
@@ -103,19 +100,16 @@
             <tr>
                 <td>{{ propiedad.numero_rol}}</td>
                 <td>{{ propiedad.tipo_propiedad}}</td>
-                <td>{{ propiedad.tipo_operacion}}</td>
-                <td>{{ propiedad.estado}}</td>
-                <td>${{ propiedad.precio_tasacion|intcomma }}</td>
-                <td>{{ propiedad.metros_cuadrados|intcomma }}m²</td>
-                <td>{{ propiedad.descripcion_propiedad}}</td>
-                <td>{{ propiedad.nro_habitaciones}}</td>
-                <td>{{ propiedad.nro_bannos}}</td>
-                <td>{{ propiedad.direccion_propiedad}}</td>
+                <td>{{ propiedad.ubicacion.region}}</td>
+                <td>{{ propiedad.ubicacion.comuna}}</td>
+                <td>{{ propiedad.ubicacion.num_calle}}</td>
+                <td>{{ propiedad.ubicacion.num_propiedad}}</td>
                 <td>{{ propiedad.rut_agente}}</td>
+                <td>{{ propiedad.estado }}</td>
                 <td class="d-flex justify-content-between">
-                    <button class="btn btn-sm btn-primary edit-btn mr-2" data-id="{{ propiedad.id}}" data-numero_rol="{{propiedad.numero_rol}}"  data-tipo_propiedad="{{ propiedad.tipo_propiedad }}" data-tipo_operacion="{{ propiedad.tipo_operacion }}" data-estado="{{propiedad.estado}}" data-precio_tasacion="{{ propiedad.precio_tasacion }}" data-descripcion_propiedad="{{ propiedad.descripcion_propiedad}}" data-metros_cuadrados="{{ propiedad.metros_cuadrados }}" data-nro_habitaciones="{{propiedad.nro_habitaciones }}" data-nro_bannos="{{propiedad.nro_bannos }}" data-direccion_propiedad="{{ propiedad.direccion_propiedad }}" data-rut_agente="{{ propiedad.rut_agente}}"  >
+                    <a href="{% url 'editar_propiedad' propiedad.id %}" class="btn btn-sm btn-primary edit-btn mr-2">
                         <i class="fas fa-edit"  ></i>  
-                    </button>
+                    </a>
                     <button class="btn btn-sm btn-danger delete-btn" data-id="{{ propiedad.id }}">
                         <i class="fas fa-trash-alt"></i>
                     </button>
@@ -170,195 +164,13 @@
 </div>
 
 
-<!-- Modal para agregar propiedad -->
-<div class="modal fade" id="addModal" tabindex="-1" role="dialog" aria-labelledby="addModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="addModalLabel">Agregar Propiedad</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <form id="addPropiedadesForm" method="post" enctype="multipart/form-data">
-                    {% csrf_token %}
-                    {{ form|crispy }}
-                    <button type="submit" class="btn btn-primary">Agregar</button>
-                </form>
-            </div>
-        </div>
-    </div>
-</div>
 
 
 
-<!-- Modal para editar propiedad -->
-<div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="editModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="editModalLabel">Editar Propiedad</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <form id="editPropiedadesForm">
-                    {% csrf_token %}
-                    <input type="hidden" id="editId" name="id">
-                    
-                    <div class="form-group">
-                        <label for="editnumero_rol">Número de rol</label>
-                        <input type="text" class="form-control" id="editnumero_rol" name="numero_rol" required>
-                    </div>
 
-                    <div class="form-group">
-                        <label for="editpropiedad">Propiedad</label>
-                        <input type="text" class="form-control" id="editpropiedad" name="tipo_propiedad" required>
-                    </div>
 
-                    <div class="form-group">
-                        <label for="editoperacion">Operación</label>
-                        <input type="text" class="form-control" id="editoperacion" name="tipo_operacion" required></input>
-                    </div>
-                    
-                    <div class="form-group form-check">
-                        <input type="checkbox" class="form-check-input" id="editestado" name="estado">
-                        <label class="form-check-label" for="editestado">Estado</label>
-                      </div>
-
-                    <div class="form-group">
-                        <label for="editdescripcion">Descripcion</label>
-                        <textarea class="form-control" id="editdescripcion" rows="3" name="descripcion_propiedad"></textarea>
-                      </div>
-                    
-                    <div class="form-group">
-                        <label for="edittasasion">Tasación</label>
-                        <input type="text" class="form-control" id="edittasasion" name="precio_tasacion" required>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="editmetros">Metro Cuadrados</label>
-                        <input type="text" class="form-control" id="editmetros" name="metros_cuadrados" ed>
-                    </div>
-                    <div class="form-group">
-                        <label for="edithabitacion">Habitación</label>
-                        <input type="text" class="form-control" id="edithabitacion" name="nro_habitaciones" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="editbanno">Baño</label>
-                        <input type="text" class="form-control" id="editbanno" name="nro_bannos" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="editdirreccion">Dirección</label>
-                        <input type="text" class="form-control" id="editdirreccion" name="direccion_propiedad" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="editrut_agente">Agente</label>
-                        <select class="form-control" id="editrut_agente" name="rut_agente">
-                            {% for agente in agentes %}
-                                <option value="{{ agente.id }}">{{ agente.nombre }} - {{agente.rut_agente}}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-
-                    <button type="submit" class="btn btn-primary">Actualizar</button>
-                </form>
-            </div>
-        </div>     
-    </div>
-</div>
 
 <script>
-// Código para manejar los formularios y actualizar la tabla
-
-// Manejar el formulario de agregar propiedad
-$('#addPropiedadesForm').on('submit', function(e) {
-    e.preventDefault();
-    
-    // Crear una instancia de FormData y agregar los datos del formulario
-    var formData = new FormData(this);
-
-    $.ajax({
-        url: "{% url 'crear' %}",
-        method: 'POST',
-        data: formData,
-        processData: false,  // Necesario para enviar datos de FormData tal como están
-        contentType: false,  // Necesario para enviar archivos y datos de FormData
-        success: function(response) {
-            Swal.fire({
-                icon: 'success',
-                title: 'Propiedad agregada',
-                text: response.message,
-                timer: 2000,
-                showConfirmButton: false
-            }).then(function() {
-                location.reload(); // Recargar la página para ver los cambios
-            });
-        },
-        error: function(response) {
-            Swal.fire({
-                icon: 'error',
-                title: 'Error',
-                text: 'Error al agregar la propiedad'
-            });
-        }
-    });
-});
-
-
-$('#editPropiedadesForm').on('submit', function(e) {
-    e.preventDefault();
-    var id = $('#editId').val();
-    
-    // Obtener el valor del checkbox y agregarlo al formulario
-    var estado = $('#editestado').is(':checked');
-    var formData = $(this).serializeArray();
-    formData.push({name: 'estado', value: estado});
-
-    // Mostrar alerta de confirmación
-    Swal.fire({
-        title: '¿Estás seguro?',
-        text: "Seguro que desea modificar esta propiedad?",
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#3085d6',
-        cancelButtonColor: '#d33',
-        confirmButtonText: 'Sí, modificar',
-        cancelButtonText: 'Cancelar'
-    }).then((result) => {
-        if (result.isConfirmed) {
-            // Si el usuario confirma, enviar el formulario
-            $.ajax({
-                url: "actualizar/" + id + "/",
-                method: 'POST',
-                data: formData,
-                success: function(response) {
-                    $('#editModal').modal('hide');
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Propiedad actualizada',
-                        text: response.message,
-                        timer: 2000,
-                        showConfirmButton: false
-                    }).then(function() {
-                        location.reload(); // Recargar la página para ver los cambios
-                    });
-                },
-                error: function(response) {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Error',
-                        text: 'Error al actualizar la propiedad'
-                    });
-                }
-            });
-        }
-    });
-});
-
-
 
 // Manejar el botón de eliminar propiedades
 $(document).on('click', '.delete-btn', function() {
@@ -404,40 +216,6 @@ $(document).on('click', '.delete-btn', function() {
     });
 });
 
-
-
-// Mostrar modal de edición con datos del cliente seleccionado
-$(document).on('click', '.edit-btn', function() {
-    var id = $(this).data('id');
-    var numero_rol = $(this).data('numero_rol');
-    var tipo_propiedad = $(this).data('tipo_propiedad');
-    var tipo_operacion = $(this).data('tipo_operacion');
-    var estado = $(this).data('estado');
-    var descripcion_propiedad = $(this).data('descripcion_propiedad');
-    var metros_cuadrados = $(this).data('metros_cuadrados');
-    var nro_habitaciones = $(this).data('nro_habitaciones');
-    var nro_bannos = $(this).data('nro_bannos');
-    var precio_tasacion = $(this).data('precio_tasacion');
-    var direccion_propiedad = $(this).data('direccion_propiedad');
-    var rut_agente = $(this).data('rut_agente');
-
-
-    $('#editId').val(id);
-    $('#editnumero_rol').val(numero_rol);
-    $('#editpropiedad').val(tipo_propiedad);
-    $('#editoperacion').val(tipo_operacion);
-    $('#editestado').prop('checked', estado);
-    $('#editdescripcion').val(descripcion_propiedad);
-    $('#editmetros').val(metros_cuadrados);
-    $('#edithabitacion').val(nro_habitaciones);
-    $('#editbanno').val(nro_bannos);
-    $('#edittasasion').val(precio_tasacion);
-    $('#editdirreccion').val(direccion_propiedad);
-    $('#editrut_agente').val(rut_agente);
-   
-
-    $('#editModal').modal('show');
-});
 
 // CSRF token setup for AJAX
 function getCookie(name) {

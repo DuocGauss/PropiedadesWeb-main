@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import EmpresaCorredora, Agente, Cliente, Tipo_Cliente, Propiedad, Propietario, Contrato
+from .models import EmpresaCorredora, Agente, Cliente, Tipo_Cliente, Propiedad, Propietario, Contrato, Ubicacion
 
 
 # Register your models here.
@@ -10,3 +10,4 @@ admin.site.register(Tipo_Cliente)
 admin.site.register(Propiedad)
 admin.site.register(Propietario)
 admin.site.register(Contrato)
+admin.site.register(Ubicacion)
