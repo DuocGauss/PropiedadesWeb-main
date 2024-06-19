@@ -1,5 +1,5 @@
 from django import forms
-from .models import EmpresaCorredora, Cliente, Tipo_Cliente, Propiedad, Propietario, Contrato, Agente, Ubicacion
+from .models import EmpresaCorredora, Cliente, Tipo_Cliente, Propiedad, Propietario, Contrato, Agente, Ubicacion, Publicacion
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm, UserChangeForm
 
 
@@ -98,3 +98,12 @@ class frmAgenteEdit(forms.ModelForm):
     class Meta:
         model=Agente
         fields=["rut_agente","nombre","direccion","telefono","correo"]
+        
+        
+        
+
+
+class frmPublicacion(forms.ModelForm):
+    class Meta:
+        model = Publicacion
+        fields = ['tipo_moneda','valor_tasacion','precio','iva','porctje_comision','monto_comision','es_destacado']

@@ -1,6 +1,6 @@
 from django.shortcuts import render
-from .forms import frmRegistro, frmLogin, frmCliente, frmClienteEdit, frmTipoCliente, frmCrearPropiedad, frmActualizarPropiedad, frmContrato, frmPropietario, frmAgente, frmAgenteEdit, frmUbicacion
-from .models import Cliente, Propiedad, Contrato, Propietario, Agente
+from .forms import frmRegistro, frmLogin, frmCliente, frmClienteEdit, frmTipoCliente, frmCrearPropiedad, frmActualizarPropiedad, frmContrato, frmPropietario, frmAgente, frmAgenteEdit, frmUbicacion, frmPublicacion
+from .models import Cliente, Propiedad, Contrato, Propietario, Agente, Publicacion, Imagen
 from django.contrib import messages
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login, authenticate, logout
@@ -9,11 +9,13 @@ from django.db.models import Q
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse, HttpResponseForbidden
 from django.views import View
+from django.views.decorators.http import require_POST
 
 # Create your views here.
 
 def home(request):
-    return render(request, 'core/home.html')
+    publicaciones = Publicacion.objects.all()
+    return render(request, 'core/home.html', {'publicaciones': publicaciones})
 
 
 
@@ -208,7 +210,7 @@ def crear_propiedad(request):
             propiedad.rut_empresa = request.user
             propiedad.save()
             messages.success(request, "Propiedad agregada correctamente")
-            return redirect('listar')
+            return redirect('imagen', propiedad.id)
     else:
         propiedad_form = frmCrearPropiedad()
         ubicacion_form = frmUbicacion()
@@ -220,6 +222,23 @@ def crear_propiedad(request):
         'propiedad_form': propiedad_form,
         'ubicacion_form': ubicacion_form
     })
+    
+@login_required        
+def imagen(request, propiedad_id):
+    propiedad = Propiedad.objects.get(id=propiedad_id)
+    imagenes = Imagen.objects.filter(propiedad=propiedad_id)
+    
+    # Verificar si la propiedad pertenece a la empresa del usuario autenticado
+    if propiedad.rut_empresa != request.user:
+        return HttpResponseForbidden("No tienes permiso para acceder a esta página")
+    
+    if request.method == 'POST':
+        for file in request.FILES.getlist('file'):
+            Imagen.objects.create(propiedad=propiedad, imagen=file)
+        
+        messages.success(request, "Datos guardados correctamente")
+        return redirect('listar')
+    return render(request, 'core/imagen.html', {'propiedad': propiedad, 'imagenes': imagenes})
 
 
 @login_required
@@ -253,6 +272,21 @@ def editar_propiedad(request, pk):
     })
     
 
+@require_POST
+@login_required
+def eliminar_imagen(request, id):
+    imagen = get_object_or_404(Imagen, id=id)
+
+    # Verificar que la imagen pertenece a la propiedad del usuario autenticado
+    if imagen.propiedad.rut_empresa != request.user:
+        return JsonResponse({'error': 'No tienes permiso para eliminar esta imagen'}, status=403)
+
+    # Eliminar la imagen
+    imagen.delete()
+
+    return JsonResponse({'message': 'Imagen eliminada correctamente'})
+    
+
 @login_required
 def eliminar_propiedad(request, pk):
     propiedad = get_object_or_404(Propiedad, pk=pk)
@@ -262,9 +296,95 @@ def eliminar_propiedad(request, pk):
     return JsonResponse({'error': 'Método no permitido'}, status=405)
 
 
+
+
+
 @login_required
 def publicacion(request):
-    return render(request, 'core/publicacion.html')
+    rut_empresa = request.user
+    propiedades = Propiedad.objects.filter(rut_empresa=rut_empresa)
+    publicaciones = Publicacion.objects.filter(id_propiedad__in=propiedades)
+    
+    contexto = {}
+
+    default_page = 1
+    page = request.GET.get('page', default_page)
+    query = request.GET.get('q')
+
+    if query:
+        publicaciones = publicaciones.filter(
+            Q(id_propiedad__rut_agente__rut_agente__icontains=query) |
+            Q(id_propiedad__rut_agente__nombre__icontains=query) |
+            Q(tipo_moneda__icontains=query) |
+            Q(valor_tasacion__icontains=query) |
+            Q(precio__icontains=query) |
+            Q(iva__icontains=query) |
+            Q(porctje_comision__icontains=query) |
+            Q(monto_comision__icontains=query) |
+            Q(es_destacado__icontains=query) 
+        )
+
+    items_per_page = 5
+    paginator = Paginator(publicaciones, items_per_page)
+
+    try:
+        publicaciones = paginator.page(page)
+    except PageNotAnInteger:
+        publicaciones = paginator.page(default_page)
+    except EmptyPage:
+        publicaciones = paginator.page(paginator.num_pages)
+
+    contexto["publicaciones"] = publicaciones
+    return render(request, 'core/publicacion.html', contexto)
+
+@login_required
+def crear_publicacion(request, propiedad_id):
+    propiedad = Propiedad.objects.get(id=propiedad_id)
+    # Verificar si la propiedad pertenece a la empresa del usuario autenticado
+    if propiedad.rut_empresa != request.user:
+        return HttpResponseForbidden("No tienes permiso para acceder a esta página")
+    
+    if request.method == 'POST':
+        form = frmPublicacion(request.POST)
+        if form.is_valid():
+            publicacion = form.save(commit=False)
+            publicacion.id_propiedad = propiedad
+            publicacion.save()
+            messages.success(request, "Propiedad publicada correctamente")
+            return redirect('publicacion')  # Redirige a una página de éxito
+    else:
+        form = frmPublicacion()
+    
+    return render(request, 'core/crear_publicacion.html', {'form': form})
+
+
+@login_required
+def editar_publicacion(request, id_publicacion):
+    publicacion = get_object_or_404(Publicacion, id_publicacion=id_publicacion)
+    
+    # Verificar si la propiedad pertenece a la empresa del usuario autenticado
+    if publicacion.id_propiedad.rut_empresa != request.user:
+        return HttpResponseForbidden("No tienes permiso para acceder a esta página")
+
+    if request.method == 'POST':
+        form = frmPublicacion(request.POST, instance=publicacion)
+        
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Publicación actualizada correctamente")
+            return redirect('publicacion')
+    else:
+        form = frmPublicacion(instance=publicacion)
+    
+    return render(request, 'core/editar_publicacion.html', {'form': form,})
+
+@login_required
+def eliminar_publicacion(request, id_publicacion):
+    publicacion = get_object_or_404(Publicacion, id_publicacion=id_publicacion)
+    if request.method == 'POST':
+        publicacion.delete()
+        return JsonResponse({'message': 'Publicación eliminada correctamente'})
+    return JsonResponse({'error': 'Método no permitido'}, status=405)
 
 @login_required
 def op_venta(request):
@@ -474,8 +594,9 @@ def eliminar_agente(request, pk):
     return JsonResponse({'error': 'Método no permitido'}, status=405)
 
 
-def detalles_publicacion(request):
-    return render(request, 'core/detalles_publicacion.html')
+def detalles_publicacion(request, id_publicacion):
+    publicaciones = Publicacion.objects.filter(id_publicacion=id_publicacion)
+    return render(request, 'core/detalles_publicacion.html', {'publicaciones': publicaciones})
 
 
 def planes(request):

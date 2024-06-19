@@ -234,98 +234,42 @@
         <!-- Shop Product Start -->
         <div class="col-lg-9 col-md-8">
             <div class="row pb-3">
+                {% for publicacion in publicaciones %}
                 <div class="col-lg-4 col-md-6 col-sm-6 pb-1">
                     <div class="product-item bg-light mb-4">
                         <div class="product-img position-relative overflow-hidden">
-                            <img class="img-fluid w-100" src="{% static 'core/'%}img/casa-1.jpg" alt="">
+                            {% if publicacion.id_propiedad.imagenes.exists %}
+                            <a href="{% url 'detalles_publicacion' publicacion.id_publicacion %}"><img class="img-fluid w-100"  src="{{ publicacion.id_propiedad.imagenes.first.imagen.url }}" alt="Imagen de propiedad">
+                            </a>
+                            {% else %}
+                            <a href="{% url 'detalles_publicacion' publicacion.id_publicacion %}"><img class="img-fluid w-100" src="{% static 'core/img/default.jpg' %}" alt="Imagen por defecto">
+                            </a>
+                            {% endif %}
                         </div>
                         <div class="text-center py-4">
-                            <a class="h6 text-decoration-none text-truncate" href="{% url "detalles_publicacion" %}">Casa 1</a>
+                            <a class="h6 text-decoration-none text-truncate">
+                                {{ publicacion.propiedad.titulo }}
+                            </a>
                             <div class="d-flex align-items-center justify-content-center mt-2">
-                                <h5>$12.300.000</h5>
+                                <h5>${{ publicacion.precio }}</h5>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div class="col-lg-4 col-md-6 col-sm-6 pb-1">
-                    <div class="product-item bg-light mb-4">
-                        <div class="product-img position-relative overflow-hidden">
-                            <img class="img-fluid w-100" src="{% static 'core/'%}img/casa-1.jpg" alt="">
-                        </div>
-                        <div class="text-center py-4">
-                            <a class="h6 text-decoration-none text-truncate" href="">Casa 1</a>
-                            <div class="d-flex align-items-center justify-content-center mt-2">
-                                <h5>$12.300.000</h5>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-4 col-md-6 col-sm-6 pb-1">
-                    <div class="product-item bg-light mb-4">
-                        <div class="product-img position-relative overflow-hidden">
-                            <img class="img-fluid w-100" src="{% static 'core/'%}img/casa-1.jpg" alt="">
-                        </div>
-                        <div class="text-center py-4">
-                            <a class="h6 text-decoration-none text-truncate" href="">Casa 1</a>
-                            <div class="d-flex align-items-center justify-content-center mt-2">
-                                <h5>$12.300.000</h5>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-4 col-md-6 col-sm-6 pb-1">
-                    <div class="product-item bg-light mb-4">
-                        <div class="product-img position-relative overflow-hidden">
-                            <img class="img-fluid w-100" src="{% static 'core/'%}img/casa-1.jpg" alt="">
-                        </div>
-                        <div class="text-center py-4">
-                            <a class="h6 text-decoration-none text-truncate" href="">Casa 1</a>
-                            <div class="d-flex align-items-center justify-content-center mt-2">
-                                <h5>$12.300.000</h5>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-4 col-md-6 col-sm-6 pb-1">
-                    <div class="product-item bg-light mb-4">
-                        <div class="product-img position-relative overflow-hidden">
-                            <img class="img-fluid w-100" src="{% static 'core/'%}img/casa-1.jpg" alt="">
-                        </div>
-                        <div class="text-center py-4">
-                            <a class="h6 text-decoration-none text-truncate" href="">Casa 1</a>
-                            <div class="d-flex align-items-center justify-content-center mt-2">
-                                <h5>$12.300.000</h5>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-4 col-md-6 col-sm-6 pb-1">
-                    <div class="product-item bg-light mb-4">
-                        <div class="product-img position-relative overflow-hidden">
-                            <img class="img-fluid w-100" src="{% static 'core/'%}img/casa-1.jpg" alt="">
-                        </div>
-                        <div class="text-center py-4">
-                            <a class="h6 text-decoration-none text-truncate" href="">Casa 1</a>
-                            <div class="d-flex align-items-center justify-content-center mt-2">
-                                <h5>$12.300.000</h5>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-12">
-                    
-                        <ul class="pagination justify-content-center">
-                            <li class="page-item disabled"><a class="page-link" href="#">Atrás</span></a></li>
-                            <li class="page-item active"><a class="page-link" href="#">1</a></li>
-                            <li class="page-item"><a class="page-link" href="#">2</a></li>
-                            <li class="page-item"><a class="page-link" href="#">3</a></li>
-                            <li class="page-item"><a class="page-link" href="#">Siguiente</a></li>
-                        </ul>
-                    
-                </div>
+                {% endfor %}
+            </div>
+            <div class="col-12">
+                <ul class="pagination justify-content-center">
+                    <li class="page-item disabled"><a class="page-link" href="#">Atrás</a></li>
+                    <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                    <li class="page-item"><a class="page-link" href="#">2</a></li>
+                    <li class="page-item"><a class="page-link" href="#">3</a></li>
+                    <li class="page-item"><a class="page-link" href="#">Siguiente</a></li>
+                </ul>
             </div>
         </div>
         <!-- Shop Product End -->
+
 
         <!-- Json Regiones y comunas -->
         <script>

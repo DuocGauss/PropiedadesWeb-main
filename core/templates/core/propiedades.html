@@ -85,6 +85,7 @@
         <thead>
             <tr>
                 <th scope="col">Num rol</th>
+                <th scope="col">Imagen</th>
                 <th scope="col">Tipo</th>
                 <th scope="col">Región</th>
                 <th scope="col">Comuna</th>
@@ -99,6 +100,13 @@
             {% for propiedad in propiedades %}
             <tr>
                 <td>{{ propiedad.numero_rol}}</td>
+                <td>
+                    {% if propiedad.imagenes.first %}
+                        <img src="{{ propiedad.imagenes.first.imagen.url }}" alt="Imagen de la propiedad" style="max-width: 100px; max-height: 100px;">
+                    {% else %}
+                        Sin imagen
+                    {% endif %}
+                </td>
                 <td>{{ propiedad.tipo_propiedad}}</td>
                 <td>{{ propiedad.ubicacion.region}}</td>
                 <td>{{ propiedad.ubicacion.comuna}}</td>
@@ -107,6 +115,12 @@
                 <td>{{ propiedad.rut_agente}}</td>
                 <td>{{ propiedad.estado }}</td>
                 <td class="d-flex justify-content-between">
+                    <a href="{% url 'crear_publicacion' propiedad.id %}" class="btn btn-sm btn-success add-publicacion-btn mr-2">
+                        <i class="fas fa-plus"></i>
+                    </a>
+                    <a href="{% url 'imagen' propiedad.id %}" class="btn btn-sm btn-outline-success edit-btn mr-2">
+                        <i class="fas fa-image"></i> 
+                    </a>
                     <a href="{% url 'editar_propiedad' propiedad.id %}" class="btn btn-sm btn-primary edit-btn mr-2">
                         <i class="fas fa-edit"  ></i>  
                     </a>

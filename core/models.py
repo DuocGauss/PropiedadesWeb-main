@@ -208,10 +208,18 @@ class Propiedad(models.Model):
         return "Nuevo" if self.estado else "Usado"
     
     def __str__(self):
-        return f"{self.tipo_propiedad}"
+        return f"{self.numero_rol}, {self.tipo_propiedad}, {self.rut_empresa}"
+
+
+class Imagen(models.Model):
+    propiedad = models.ForeignKey(Propiedad, related_name='imagenes', on_delete=models.CASCADE)
+    imagen = models.ImageField(upload_to='imagenes/')
+    
+    def __str__(self):
+        return f"Imagen de {self.propiedad.numero_rol}"
         
 class Publicacion(models.Model):
-    id_publicacion = models.IntegerField(primary_key=True)
+    id_publicacion = models.AutoField(primary_key=True)
     tipo_moneda = models.CharField(max_length=10)
     valor_tasacion = models.IntegerField()
     precio = models.IntegerField()
@@ -219,11 +227,10 @@ class Publicacion(models.Model):
     porctje_comision = models.FloatField()
     monto_comision = models.IntegerField()
     es_destacado = models.BooleanField()
-    rut_cliente = models.ForeignKey(Cliente, on_delete=CASCADE)
     id_propiedad = models.ForeignKey(Propiedad, on_delete=CASCADE)
 
     def __str__(self):
-        return f"{self.id_publicacion}"
+        return f"{self.id_publicacion}, {self.id_propiedad}"
     
 class Operacion_arriendo(models.Model):
     id_op_arriendo = models.IntegerField(primary_key=True)

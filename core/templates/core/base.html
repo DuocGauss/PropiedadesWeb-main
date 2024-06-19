@@ -40,6 +40,12 @@
 
     <!-- Customized Bootstrap Stylesheet -->
     <link href="{% static 'core/css/Estilos.css'%}" rel="stylesheet">
+    <script src="{% static 'core/js/main.js' %}" defer></script>
+
+    <!--Dropzone-->
+    <script src="https://unpkg.com/dropzone@5/dist/min/dropzone.min.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/dropzone@5/dist/min/dropzone.min.css" type="text/css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.9.2/min/dropzone.min.js"></script>
 </head>
 <style>
     nav,
@@ -130,11 +136,11 @@
         </a>
 
         <a href="{% url "op_arriendo" %}" >
-          <div class="option">
-            <i class="fas fa-hand-holding-usd"></i>
-              <h6>Arriendo</h6>
-          </div>
-      </a>
+            <div class="option">
+                <i class="fas fa-hand-holding-usd"></i>
+                <h6>Arriendo</h6>
+            </div>
+        </a>
 
         <a href="#" onclick="confirmLogout()">
             <div class="option">
