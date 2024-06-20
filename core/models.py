@@ -202,6 +202,7 @@ class Propiedad(models.Model):
     ubicacion = models.OneToOneField(Ubicacion, on_delete=models.CASCADE)
     rut_empresa = models.ForeignKey(EmpresaCorredora, on_delete=CASCADE)
     rut_agente = models.ForeignKey(Agente, on_delete=models.SET_NULL, null=True, blank=True)
+    propietario = models.ForeignKey(Propietario, on_delete=models.SET_NULL, null=True, blank=True)
     
 
     def estado_display(self):

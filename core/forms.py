@@ -45,7 +45,8 @@ class frmCrearPropiedad(forms.ModelForm):
         model = Propiedad
         fields = [
             'numero_rol','tipo_propiedad', 'tipo_operacion', 'titulo', 'estado', 'precio_tasacion',
-            'descripcion_propiedad', 'metros_cuadrados', 'nro_habitaciones', 'nro_bannos','rut_agente'
+            'descripcion_propiedad', 'metros_cuadrados', 'nro_habitaciones', 'nro_bannos','rut_agente',
+            'propietario'
         ]
     titulo = forms.FileField(required=False)
 

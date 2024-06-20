@@ -83,6 +83,7 @@
                 <thead>
                     <tr>
                         <th scope="col">Agente</th>
+                        <th scope="col">Propietario</th>
                         <th scope="col">Moneda</th>
                         <th scope="col">Valor Tasación</th>
                         <th scope="col">Precio</th>
@@ -97,6 +98,7 @@
                     {% for publicacion in publicaciones %}
                     <tr>
                         <td>{{ publicacion.id_propiedad.rut_agente}}</td>
+                        <td>{{ publicacion.id_propiedad.propietario}}</td>
                         <td>{{ publicacion.tipo_moneda}}</td>
                         <td>{{ publicacion.valor_tasacion}}</td>
                         <td>{{ publicacion.precio}}</td>

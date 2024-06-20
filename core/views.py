@@ -217,6 +217,11 @@ def crear_propiedad(request):
         
         # Filtrar agentes asociados al usuario autenticado
         propiedad_form.fields['rut_agente'].queryset = Agente.objects.filter(rut_empresa=request.user)
+        
+        # Filtrar propietarios asociados a la empresa corredora del usuario autenticado
+        contratos = Contrato.objects.filter(rut_empresa=request.user)
+        propietarios = Propietario.objects.filter(contrato__in=contratos).distinct()
+        propiedad_form.fields['propietario'].queryset = propietarios
     
     return render(request, 'core/crear_propiedad.html', {
         'propiedad_form': propiedad_form,
@@ -265,6 +270,11 @@ def editar_propiedad(request, pk):
         
         # Filtrar agentes asociados al usuario autenticado
         propiedad_form.fields['rut_agente'].queryset = Agente.objects.filter(rut_empresa=request.user)
+        
+        # Filtrar propietarios asociados a la empresa corredora del usuario autenticado
+        contratos = Contrato.objects.filter(rut_empresa=request.user)
+        propietarios = Propietario.objects.filter(contrato__in=contratos).distinct()
+        propiedad_form.fields['propietario'].queryset = propietarios
     
     return render(request, 'core/editar_propiedad.html', {
         'propiedad_form': propiedad_form,
